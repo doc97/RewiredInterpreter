@@ -5,14 +5,16 @@ public class Program {
 
     public static void Main(string[] args) {
         while (true) {
-            Console.Write("calc> ");
+            Console.Write("$ ");
             string input = Console.ReadLine();
             try {
                 Lexer lexer = new Lexer(input);
                 Parser parser = new Parser(lexer.Next());
                 Interpreter interpreter = new Interpreter(parser);
-                int result = interpreter.Interpret();
-                Console.WriteLine(result);
+                object result = interpreter.Interpret();
+                if (result is int) {
+                    Console.WriteLine(result);
+                }
             } catch (Exception e) {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);

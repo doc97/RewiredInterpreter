@@ -9,38 +9,42 @@ namespace InterpreterPractice {
             this.parser = parser;
         }
 
-        public int Interpret() {
+        public object Interpret() {
             AbstractSyntaxTree tree = parser.Parse();
             return tree.Accept(this);
         }
 
-        public int Visit(UnaryOp op) {
+        public object Visit(NoOp op) {
+            return null;
+        }
+
+        public object Visit(UnaryOp op) {
             switch (op.Op.Type) {
                 case TokenType.Plus:
-                    return op.Expr.Accept(this);
+                    return +(int)op.Expr.Accept(this);
                 case TokenType.Minus:
-                    return -op.Expr.Accept(this);
+                    return -(int)op.Expr.Accept(this);
                 default:
                     throw new Exception("Unary operator not implemented: " + op.Op);
             }
         }
 
-        public int Visit(BinOp op) {
+        public object Visit(BinOp op) {
             switch (op.Op.Type) {
                 case TokenType.Plus:
-                    return op.Left.Accept(this) + op.Right.Accept(this);
+                    return (int)op.Left.Accept(this) + (int)op.Right.Accept(this);
                 case TokenType.Minus:
-                    return op.Left.Accept(this) - op.Right.Accept(this);
+                    return (int)op.Left.Accept(this) - (int)op.Right.Accept(this);
                 case TokenType.Asterisk:
-                    return op.Left.Accept(this) * op.Right.Accept(this);
+                    return (int)op.Left.Accept(this) * (int)op.Right.Accept(this);
                 case TokenType.Slash:
-                    return op.Left.Accept(this) / op.Right.Accept(this);
+                    return (int)op.Left.Accept(this) / (int)op.Right.Accept(this);
                 default:
                     throw new Exception("Binary operator not implemented: " + op.Op);
             }
         }
 
-        public int Visit(Num num) {
+        public object Visit(Num num) {
             return int.Parse(num.Value);
         }
     }

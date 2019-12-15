@@ -10,7 +10,7 @@ namespace InterpreterPractice {
             Expr = expr;
         }
 
-        public override int Accept(IAbstractSyntaxTreeVisitor visitor) {
+        public override object Accept(IAbstractSyntaxTreeVisitor visitor) {
             return visitor.Visit(this);
         }
     }
