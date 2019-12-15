@@ -14,6 +14,8 @@ public class Program {
                 object result = interpreter.Interpret();
                 if (result is int) {
                     Console.WriteLine(result);
+                } else {
+                    interpreter.PrintGlobalScope();
                 }
             } catch (Exception e) {
                 Console.WriteLine(e.Message);

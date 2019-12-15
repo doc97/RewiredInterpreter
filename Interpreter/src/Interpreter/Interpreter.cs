@@ -1,12 +1,16 @@
 using System;
+using System.Collections.Generic;
 
 namespace InterpreterPractice {
 
     public class Interpreter : IAbstractSyntaxTreeVisitor {
 
         private Parser parser;
+        private Dictionary<string, int> globalScope;
+
         public Interpreter(Parser parser) {
             this.parser = parser;
+            globalScope = new Dictionary<string, int>();
         }
 
         public object Interpret() {
@@ -14,6 +18,19 @@ namespace InterpreterPractice {
             return tree.Accept(this);
         }
 
+        public void PrintGlobalScope() {
+            Console.WriteLine("{");
+            foreach (KeyValuePair<string, int> pair in globalScope) {
+                Console.WriteLine("  " + pair.Key + ": " + pair.Value);
+            }
+            Console.WriteLine("}");
+        }
+
+        public int GetGlobalVar(string name) {
+            return globalScope[name];
+        }
+
+        #region IAbstractSyntaxTreeVisitor
         public object Visit(NoOp op) {
             return null;
         }
@@ -47,6 +64,29 @@ namespace InterpreterPractice {
         public object Visit(Num num) {
             return int.Parse(num.Value);
         }
+
+        public object Visit(Assign assign) {
+            // The left-hand side of an Assign statement is Var
+            string varName = ((Var)assign.Left).Value;
+            int varValue = (int)assign.Right.Accept(this);
+            globalScope[varName] = varValue;
+            return null;
+        }
+
+        public object Visit(Var var) {
+            if (globalScope.ContainsKey(var.Value)) {
+                return globalScope[var.Value];
+            }
+            throw new Exception("Variable '" + var.Value + "' does not exist!");
+        }
+
+        public object Visit(Compound comp) {
+            foreach (AbstractSyntaxTree child in comp.Children) {
+                child.Accept(this);
+            }
+            return null;
+        }
+        #endregion
     }
 
 }

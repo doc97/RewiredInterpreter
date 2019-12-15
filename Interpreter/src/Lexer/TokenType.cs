@@ -7,6 +7,9 @@ namespace InterpreterPractice {
         Asterisk,
         LeftParenthesis,
         RightParenthesis,
+        Assign,
+        SemiColon,
+        Id,
         Eof
     }
 }

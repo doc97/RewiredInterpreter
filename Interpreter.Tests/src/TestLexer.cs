@@ -6,8 +6,13 @@ namespace InterpreterPractice.Tests {
     public class TestLexer {
 
         [Test]
-        public void New_EmptyString() {
-            Assert.IsNull(Lexer.New(""));
+        public void New_EmptyStringTextIsEmpty() {
+            Assert.IsTrue(Lexer.New("").Text == "");
+        }
+
+        [Test]
+        public void New_EmptyStringTokenIsEof() {
+            Assert.IsTrue(Lexer.New("").Token.Type == TokenType.Eof);
         }
 
         [TestCase("1", ExpectedResult="")]

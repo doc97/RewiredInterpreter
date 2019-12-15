@@ -32,6 +32,8 @@ namespace InterpreterPractice {
                     text = text.TrimStart();
                     currentChar = NextChar(text);
                     continue;
+                } else if (char.IsLetter(currentChar)) {
+                    token = new Token(TokenType.Id, GetId(text));
                 } else if ("0123456789".Contains(currentChar)) {
                     token = new Token(TokenType.Integer, GetInteger(text));
                 } else if (currentChar == '+') {
@@ -46,6 +48,10 @@ namespace InterpreterPractice {
                     token = new Token(TokenType.LeftParenthesis, "(");
                 } else if (currentChar == ')') {
                     token = new Token(TokenType.RightParenthesis, ")");
+                } else if (currentChar == ';') {
+                    token = new Token(TokenType.SemiColon, ";");
+                } else if (NextString(text, 2) == ":=") {
+                    token = new Token(TokenType.Assign, ":=");
                 }
 
                 if (token.Type == TokenType.Eof) {
@@ -55,9 +61,9 @@ namespace InterpreterPractice {
                 return new Lexer(text.Substring(token.Value.Length), token);
             }
 
-            return null;
+            return new Lexer("", new Token(TokenType.Eof, ""));
         }
-        
+
         private char NextChar(string text) {
             if (text.Length == 0) {
                 return '\0';
@@ -66,14 +72,30 @@ namespace InterpreterPractice {
             }
         }
 
+        private string NextString(string text, int length) {
+            if (text.Length <= length) {
+                return "";
+            } else {
+                return text.Substring(0, length);
+            }
+        }
+
         private string SkipWhitespace(string text) {
             return text.TrimStart();
         }
 
+        private string GetId(string text) {
+            return GetMultiCharValue(text, c => char.IsLetterOrDigit(c));
+        }
+        
         private string GetInteger(string text) {
+            return GetMultiCharValue(text, c => "0123456789".Contains(c));
+        }
+
+        private string GetMultiCharValue(string text, Predicate<char> accept) {
             string result = "";
             int pos = 0;
-            while (pos < text.Length && "0123456789".Contains(text[pos])) {
+            while (pos < text.Length && accept.Invoke(text[pos])) {
                 result += text[pos];
                 pos++;
             }
