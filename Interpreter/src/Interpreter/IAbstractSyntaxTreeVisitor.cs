@@ -1,4 +1,4 @@
-namespace InterpreterPractice {
+namespace Rewired.Interpreter {
 
     public interface IAbstractSyntaxTreeVisitor {
         object Visit(NoOp op);

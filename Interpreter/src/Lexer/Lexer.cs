@@ -1,6 +1,6 @@
 using System;
 
-namespace InterpreterPractice {
+namespace Rewired.Interpreter {
 
     public class Lexer {
 

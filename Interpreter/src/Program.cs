@@ -1,5 +1,5 @@
 using System;
-using InterpreterPractice;
+using Rewired.Interpreter;
 
 public class Program {
 

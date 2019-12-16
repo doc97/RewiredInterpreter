@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace InterpreterPractice.Tests {
+namespace Rewired.Interpreter.Tests {
 
     [TestFixture]
     public class TestInterpreter {

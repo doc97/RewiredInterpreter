@@ -1,4 +1,4 @@
-namespace InterpreterPractice {
+namespace Rewired.Interpreter {
 
     public class UnaryOp : AbstractSyntaxTree {
 

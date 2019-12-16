@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace InterpreterPractice {
+namespace Rewired.Interpreter {
 
     public class Interpreter : IAbstractSyntaxTreeVisitor {
 
