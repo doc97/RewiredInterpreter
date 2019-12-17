@@ -5,17 +5,16 @@ namespace Rewired.Interpreter {
 
     public class Interpreter : IAbstractSyntaxTreeVisitor {
 
-        private Parser parser;
+        private AbstractSyntaxTree tree;
         private Dictionary<string, int> globalScope;
 
-        public Interpreter(Parser parser) {
-            this.parser = parser;
+        public Interpreter(AbstractSyntaxTree tree) {
+            this.tree = tree;
             globalScope = new Dictionary<string, int>();
         }
 
-        public object Interpret() {
-            AbstractSyntaxTree tree = parser.Parse();
-            return tree.Accept(this);
+        public void Interpret() {
+            tree.Accept(this);
         }
 
         public void PrintGlobalScope() {
@@ -38,9 +37,9 @@ namespace Rewired.Interpreter {
         public object Visit(UnaryOp op) {
             switch (op.Op.Type) {
                 case TokenType.Plus:
-                    return +(int)op.Expr.Accept(this);
+                    return +(int) op.Expr.Accept(this);
                 case TokenType.Minus:
-                    return -(int)op.Expr.Accept(this);
+                    return -(int) op.Expr.Accept(this);
                 default:
                     throw new Exception("Unary operator not implemented: " + op.Op);
             }
@@ -49,13 +48,13 @@ namespace Rewired.Interpreter {
         public object Visit(BinOp op) {
             switch (op.Op.Type) {
                 case TokenType.Plus:
-                    return (int)op.Left.Accept(this) + (int)op.Right.Accept(this);
+                    return (int) op.Left.Accept(this) + (int) op.Right.Accept(this);
                 case TokenType.Minus:
-                    return (int)op.Left.Accept(this) - (int)op.Right.Accept(this);
+                    return (int) op.Left.Accept(this) - (int) op.Right.Accept(this);
                 case TokenType.Asterisk:
-                    return (int)op.Left.Accept(this) * (int)op.Right.Accept(this);
+                    return (int) op.Left.Accept(this) * (int) op.Right.Accept(this);
                 case TokenType.Slash:
-                    return (int)op.Left.Accept(this) / (int)op.Right.Accept(this);
+                    return (int) op.Left.Accept(this) / (int) op.Right.Accept(this);
                 default:
                     throw new Exception("Binary operator not implemented: " + op.Op);
             }
@@ -67,8 +66,8 @@ namespace Rewired.Interpreter {
 
         public object Visit(Assign assign) {
             // The left-hand side of an Assign statement is Var
-            string varName = ((Var)assign.Left).Value;
-            int varValue = (int)assign.Right.Accept(this);
+            string varName = ((Var) assign.Left).Value;
+            int varValue = (int) assign.Right.Accept(this);
             globalScope[varName] = varValue;
             return null;
         }
