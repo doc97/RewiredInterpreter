@@ -7,18 +7,11 @@ namespace Rewired.Interpreter {
         public string Text { get; }
         public Token Token { get; }
 
+        public Lexer(string text) : this(text, new Token(TokenType.Eof, "")) {}
+
         private Lexer(string text, Token token) {
             Text = text;
             Token = token;
-        }
-
-        public Lexer(string text) {
-            Text = text;
-            Token = new Token(TokenType.Eof, null);
-        }
-
-        public static Lexer New(string text) {
-            return new Lexer(text, null).Next();
         }
 
         public Lexer Next() {

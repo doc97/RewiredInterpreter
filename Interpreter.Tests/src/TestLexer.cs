@@ -5,28 +5,6 @@ namespace Rewired.Interpreter.Tests {
     [TestFixture]
     public class TestLexer {
 
-        [Test]
-        public void New_EmptyStringTextIsEmpty() {
-            Assert.IsTrue(Lexer.New("").Text == "");
-        }
-
-        [Test]
-        public void New_EmptyStringTokenIsEof() {
-            Assert.IsTrue(Lexer.New("").Token.Type == TokenType.Eof);
-        }
-
-        [TestCase("1", ExpectedResult="")]
-        [TestCase("1+1", ExpectedResult="+1")]
-        public string New_TextIsOneLessChar(string text) {
-            return Lexer.New(text).Text;
-        }
-
-        [TestCase("0", ExpectedResult="0")]
-        [TestCase("1+2", ExpectedResult="1")]
-        public string New_TokenIsFirstToken(string text) {
-            return Lexer.New(text).Token.Value;
-        }
-
         [TestCase("1+1", ExpectedResult="+1")]
         [TestCase("1-2+3", ExpectedResult="-2+3")]
         public string Next_ConsumesOneToken(string text) {

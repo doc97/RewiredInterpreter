@@ -11,7 +11,7 @@ public class Program {
             string input = Console.ReadLine();
             try {
                 Lexer lexer = new Lexer(input);
-                Parser parser = new Parser(lexer.Next());
+                Parser parser = new Parser(lexer);
                 AbstractSyntaxTree tree = parser.Parse();
 
                 SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
