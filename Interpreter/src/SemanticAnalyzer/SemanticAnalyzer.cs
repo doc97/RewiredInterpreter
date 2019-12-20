@@ -2,7 +2,7 @@ using System;
 
 namespace Rewired.Interpreter {
 
-    public class SemanticAnalyzer : IAbstractSyntaxTreeVisitor {
+    public class SemanticAnalyzer : IAbstractSyntaxTreeNodeVisitor {
 
         private AbstractSyntaxTree tree;
         public SymbolTable Symbols { get; }
@@ -22,7 +22,7 @@ namespace Rewired.Interpreter {
             tree.Accept(this);
         }
 
-        #region IAbstractSyntaxTreeVisitor
+        #region IAbstractSyntaxTreeNodeVisitor
         public object Visit(NoOp op) {
             return null;
         }

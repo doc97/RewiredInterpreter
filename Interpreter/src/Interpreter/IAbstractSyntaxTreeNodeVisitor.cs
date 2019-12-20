@@ -1,6 +1,6 @@
 namespace Rewired.Interpreter {
 
-    public interface IAbstractSyntaxTreeVisitor {
+    public interface IAbstractSyntaxTreeNodeVisitor {
         object Visit(NoOp op);
         object Visit(UnaryOp op);
         object Visit(BinOp op);

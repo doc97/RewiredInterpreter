@@ -10,7 +10,7 @@ namespace Rewired.Interpreter {
             Expr = expr;
         }
 
-        public override object Accept(IAbstractSyntaxTreeVisitor visitor) {
+        public override object Accept(IAbstractSyntaxTreeNodeVisitor visitor) {
             return visitor.Visit(this);
         }
     }

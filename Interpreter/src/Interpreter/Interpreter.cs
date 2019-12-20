@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Rewired.Interpreter {
 
-    public class Interpreter : IAbstractSyntaxTreeVisitor {
+    public class Interpreter : IAbstractSyntaxTreeNodeVisitor {
 
         private AbstractSyntaxTree tree;
         private Dictionary<string, int> globalScope;
@@ -29,7 +29,7 @@ namespace Rewired.Interpreter {
             return globalScope[name];
         }
 
-        #region IAbstractSyntaxTreeVisitor
+        #region IAbstractSyntaxTreeNodeVisitor
         public object Visit(NoOp op) {
             return null;
         }

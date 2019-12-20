@@ -9,7 +9,7 @@ namespace Rewired.Interpreter {
             this.token = token;
         }
 
-        public override object Accept(IAbstractSyntaxTreeVisitor visitor) {
+        public override object Accept(IAbstractSyntaxTreeNodeVisitor visitor) {
             return visitor.Visit(this);
         }
     }

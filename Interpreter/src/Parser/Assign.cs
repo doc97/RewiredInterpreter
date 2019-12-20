@@ -14,7 +14,7 @@ namespace Rewired.Interpreter {
             Right = right;
         }
 
-        public override object Accept(IAbstractSyntaxTreeVisitor visitor) {
+        public override object Accept(IAbstractSyntaxTreeNodeVisitor visitor) {
             return visitor.Visit(this);
         }
     }
