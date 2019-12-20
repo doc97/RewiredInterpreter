@@ -4,28 +4,28 @@ using System.Collections.Generic;
 namespace Rewired.Interpreter {
 
     /// <summary>
-    /// Parser takes a lexer (tokenizer) and constructs an intermediate form
+    /// Parser takes a tokenizer and constructs an intermediate form
     /// called AST (Abstract Syntax Tree) that can be used e.g. by an
     /// interpreter to evaluate statements.
     /// </summary>
     public class Parser {
 
         /// <summary>
-        /// The `Lexer` that is copied before parsing.
+        /// The `Tokenizer` that is copied before parsing.
         /// </summary>
-        private Lexer origLexer;
+        private Tokenizer origTokenizer;
 
         /// <summary>
-        /// The `Lexer` used during parsing, it is stateful.
+        /// The `Tokenizer` used during parsing, it is stateful.
         /// </summary>
-        private Lexer lexer;
+        private Tokenizer tokenizer;
 
         /// <summary>
         /// Instantiates a new instance.
         /// </summary>
-        /// <param name="lexer"></param>
-        public Parser(Lexer lexer) {
-            origLexer = lexer;
+        /// <param name="tokenizer"></param>
+        public Parser(Tokenizer tokenizer) {
+            origTokenizer = tokenizer;
         }
 
         /// <summary>
@@ -34,10 +34,10 @@ namespace Rewired.Interpreter {
         /// <returns>The constructed AST</returns>
         /// <exception>Throws a <c>System.Exception</c> if there are syntax errors.</exception>
         public AbstractSyntaxTreeNode Parse() {
-            lexer = origLexer.Next();
+            tokenizer = origTokenizer.Next();
 
             AbstractSyntaxTreeNode node = Compound();
-            if (lexer.Token.Type != TokenType.Eof) {
+            if (tokenizer.Token.Type != TokenType.Eof) {
                 throw new Exception("Invalid syntax");
             }
 
@@ -53,7 +53,7 @@ namespace Rewired.Interpreter {
             List<AbstractSyntaxTreeNode> nodes = new List<AbstractSyntaxTreeNode>();
             nodes.Add(Statement());
 
-            while (lexer.Token.Type != TokenType.Eof) {
+            while (tokenizer.Token.Type != TokenType.Eof) {
                 nodes.Add(Statement());
             }
 
@@ -67,12 +67,12 @@ namespace Rewired.Interpreter {
         /// </summary>
         private AbstractSyntaxTreeNode Statement() {
             AbstractSyntaxTreeNode node;
-            if (lexer.Token.Type == TokenType.Id) {
+            if (tokenizer.Token.Type == TokenType.Id) {
                 node = AssignmentStatement();
             } else {
                 node = EmptyStatement();
             }
-            lexer = Eat(lexer, TokenType.SemiColon);
+            tokenizer = Eat(tokenizer, TokenType.SemiColon);
             return node;
         }
 
@@ -83,8 +83,8 @@ namespace Rewired.Interpreter {
         /// </summary>
         private AbstractSyntaxTreeNode AssignmentStatement() {
             AbstractSyntaxTreeNode left = Variable();
-            Token op = lexer.Token;
-            lexer = Eat(lexer, TokenType.Assign);
+            Token op = tokenizer.Token;
+            tokenizer = Eat(tokenizer, TokenType.Assign);
             AbstractSyntaxTreeNode right = Expression();
             return new Assign(left, op, right);
         }
@@ -95,8 +95,8 @@ namespace Rewired.Interpreter {
         /// Rule: VAR -> ID
         /// </summary>
         private AbstractSyntaxTreeNode Variable() {
-            Token token = lexer.Token;
-            lexer = Eat(lexer, TokenType.Id);
+            Token token = tokenizer.Token;
+            tokenizer = Eat(tokenizer, TokenType.Id);
             return new Var(token);
         }
 
@@ -116,12 +116,12 @@ namespace Rewired.Interpreter {
         /// </summary>
         private AbstractSyntaxTreeNode Expression() {
             AbstractSyntaxTreeNode node = Term();
-            while (lexer.Token.Type != TokenType.Eof) {
-                Token token = lexer.Token;
+            while (tokenizer.Token.Type != TokenType.Eof) {
+                Token token = tokenizer.Token;
                 if (token.Type == TokenType.Plus) {
-                    lexer = Eat(lexer, TokenType.Plus);
+                    tokenizer = Eat(tokenizer, TokenType.Plus);
                 } else if (token.Type == TokenType.Minus) {
-                    lexer = Eat(lexer, TokenType.Minus);
+                    tokenizer = Eat(tokenizer, TokenType.Minus);
                 } else {
                     break;
                 }
@@ -138,12 +138,12 @@ namespace Rewired.Interpreter {
         /// </summary>
         private AbstractSyntaxTreeNode Term() {
             AbstractSyntaxTreeNode node = Factor();
-            while (lexer.Token.Type != TokenType.Eof) {
-                Token token = lexer.Token;
+            while (tokenizer.Token.Type != TokenType.Eof) {
+                Token token = tokenizer.Token;
                 if (token.Type == TokenType.Asterisk) {
-                    lexer = Eat(lexer, TokenType.Asterisk);
+                    tokenizer = Eat(tokenizer, TokenType.Asterisk);
                 } else if (token.Type == TokenType.Slash) {
-                    lexer = Eat(lexer, TokenType.Slash);
+                    tokenizer = Eat(tokenizer, TokenType.Slash);
                 } else {
                     break;
                 }
@@ -163,20 +163,20 @@ namespace Rewired.Interpreter {
         ///               | VAR
         /// </summary>
         private AbstractSyntaxTreeNode Factor() {
-            Token token = lexer.Token;
+            Token token = tokenizer.Token;
             if (token.Type == TokenType.Plus) {
-                lexer = Eat(lexer, TokenType.Plus);
+                tokenizer = Eat(tokenizer, TokenType.Plus);
                 return new UnaryOp(token, Factor());
             } else if (token.Type == TokenType.Minus) {
-                lexer = Eat(lexer, TokenType.Minus);
+                tokenizer = Eat(tokenizer, TokenType.Minus);
                 return new UnaryOp(token, Factor());
             } else if (token.Type == TokenType.LeftParenthesis) {
-                lexer = Eat(lexer, TokenType.LeftParenthesis);
+                tokenizer = Eat(tokenizer, TokenType.LeftParenthesis);
                 AbstractSyntaxTreeNode node = Expression();
-                lexer = Eat(lexer, TokenType.RightParenthesis);
+                tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
                 return node;
             } else if (token.Type == TokenType.Integer) {
-                lexer = Eat(lexer, TokenType.Integer);
+                tokenizer = Eat(tokenizer, TokenType.Integer);
                 return new Int(token);
             } else {
                 return Variable();
@@ -186,11 +186,11 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Eat verifies that the next token is of the specified type, and if so consumes it.
         /// </summary>
-        /// <param name="lexer">Contains the next token</param>
-        /// <returns>A new lexer without the consumed token</returns>
-        private Lexer Eat(Lexer lexer, TokenType type) {
-            if (type == lexer.Token.Type) {
-                return lexer.Next();
+        /// <param name="tokenizer">Contains the next token</param>
+        /// <returns>A new tokenizer without the consumed token</returns>
+        private Tokenizer Eat(Tokenizer tokenizer, TokenType type) {
+            if (type == tokenizer.Token.Type) {
+                return tokenizer.Next();
             } else {
                 throw new Exception("Invalid syntax");
             }

@@ -11,8 +11,8 @@ public class Program {
             Console.Write("$ ");
             string input = Console.ReadLine();
             try {
-                Lexer lexer = new Lexer(input);
-                Parser parser = new Parser(lexer);
+                Tokenizer tokenizer = new Tokenizer(input);
+                Parser parser = new Parser(tokenizer);
                 AbstractSyntaxTreeNode tree = parser.Parse();
 
                 SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);

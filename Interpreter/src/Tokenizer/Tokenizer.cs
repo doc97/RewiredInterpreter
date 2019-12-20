@@ -2,19 +2,19 @@ using System;
 
 namespace Rewired.Interpreter {
 
-    public class Lexer {
+    public class Tokenizer {
 
         public string Text { get; }
         public Token Token { get; }
 
-        public Lexer(string text) : this(text, new Token(TokenType.Eof, "")) {}
+        public Tokenizer(string text) : this(text, new Token(TokenType.Eof, "")) {}
 
-        private Lexer(string text, Token token) {
+        private Tokenizer(string text, Token token) {
             Text = text;
             Token = token;
         }
 
-        public Lexer Next() {
+        public Tokenizer Next() {
             string text = Text;
             char currentChar = NextChar(text);
 
@@ -51,10 +51,10 @@ namespace Rewired.Interpreter {
                     throw new Exception("Invalid syntax");
                 }
 
-                return new Lexer(text.Substring(token.Value.Length), token);
+                return new Tokenizer(text.Substring(token.Value.Length), token);
             }
 
-            return new Lexer("", new Token(TokenType.Eof, ""));
+            return new Tokenizer("", new Token(TokenType.Eof, ""));
         }
 
         private char NextChar(string text) {
@@ -96,7 +96,7 @@ namespace Rewired.Interpreter {
         }
 
         public override string ToString() {
-            return "Lexer('" + Text + "', " + Token + ")";
+            return "Tokenizer('" + Text + "', " + Token + ")";
         }
     }
 

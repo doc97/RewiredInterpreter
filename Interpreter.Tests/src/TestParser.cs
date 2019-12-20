@@ -7,7 +7,7 @@ namespace Rewired.Interpreter.Tests {
 
         [Test]
         public void Parse_HasNoState() {
-            Parser parser = new Parser(new Lexer("a := 1;"));
+            Parser parser = new Parser(new Tokenizer("a := 1;"));
             Assert.True(parser.Parse() is Compound);
             Assert.True(parser.Parse() is Compound);
         }

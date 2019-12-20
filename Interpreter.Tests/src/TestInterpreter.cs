@@ -12,7 +12,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("a := 3*2;", ExpectedResult = 6)]
         [TestCase("a := 4/2;", ExpectedResult = 2)]
         public int Interpret_Calculation(string text) {
-            AbstractSyntaxTreeNode tree = new Parser(new Lexer(text)).Parse();
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
@@ -22,7 +22,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("a := 1 / 2 + 3;", ExpectedResult = 3)]
         [TestCase("a := 4 * 3 / 2;", ExpectedResult = 6)]
         public int Interpret_RespectsArithmeticPrecedence(string text) {
-            AbstractSyntaxTreeNode tree = new Parser(new Lexer(text)).Parse();
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
@@ -31,7 +31,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("a := (1 + 1) * 3;", ExpectedResult = 6)]
         [TestCase("a := 2 + (1 + 3) * 3;", ExpectedResult = 14)]
         public int Interprets_RespectParentheses(string text) {
-            AbstractSyntaxTreeNode tree = new Parser(new Lexer(text)).Parse();
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
@@ -39,7 +39,7 @@ namespace Rewired.Interpreter.Tests {
 
         [TestCase("a := 3 * (2 + (5 - 3));", ExpectedResult = 12)]
         public int Interpret_HandleNestedParentheses(string text) {
-            AbstractSyntaxTreeNode tree = new Parser(new Lexer(text)).Parse();
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
@@ -47,7 +47,7 @@ namespace Rewired.Interpreter.Tests {
 
         [TestCase("a := 5---2;", ExpectedResult = 3)]
         public int Interpret_HandleUnaryOperator(string text) {
-            AbstractSyntaxTreeNode tree = new Parser(new Lexer(text)).Parse();
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
@@ -56,7 +56,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("x := 2; a := x + 3;", ExpectedResult = 5)]
         [TestCase("a := 3; b := a * 2; a := b - 2;", ExpectedResult = 4)]
         public int Interpret_HandleVariableValues(string text) {
-            AbstractSyntaxTreeNode tree = new Parser(new Lexer(text)).Parse();
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
