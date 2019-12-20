@@ -2,22 +2,49 @@ using System;
 
 namespace Rewired.Interpreter {
 
+    /// <summary>
+    /// SemanticAnalyzer implements the AST node visitor.
+    /// 
+    /// It will walk the tree and check for semantic errors like the use of
+    /// unknown variables.
+    /// </summary>
     public class SemanticAnalyzer : IAbstractSyntaxTreeNodeVisitor {
 
+        /// <summary>
+        /// The AST to analyze.
+        /// </summary>
         private AbstractSyntaxTreeNode tree;
+
+        /// <summary>
+        /// Gets the symbol table.
+        /// </summary>
+        /// <value></value>
         public SymbolTable Symbols { get; }
 
+        /// <summary>
+        /// Instantiates a new instance with built-in symbols added.
+        /// </summary>
+        /// <param name="tree">The AST to analyze</param>
         public SemanticAnalyzer(AbstractSyntaxTreeNode tree) {
             this.tree = tree;
             Symbols = new SymbolTable();
             InitBuiltInTypes();
         }
 
+        /// <summary>
+        /// Adds built-in types to the symbol table.
+        /// </summary>
         private void InitBuiltInTypes() {
             Symbols.Insert(new BuiltInTypeSymbol("INTEGER"));
             Symbols.Insert(new BuiltInTypeSymbol("REAL"));
         }
 
+        /// <summary>
+        /// Walks the AST.
+        /// </summary>
+        /// <exception cref="System.Exception">
+        /// Thrown when there is a semantic error.
+        /// </exception>
         public void Analyze() {
             tree.VisitNode(this);
         }
