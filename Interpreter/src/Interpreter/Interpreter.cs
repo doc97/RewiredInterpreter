@@ -3,20 +3,39 @@ using System.Collections.Generic;
 
 namespace Rewired.Interpreter {
 
+    /// <summary>
+    /// Interpreter implements the AST node visitor and will walk the tree and
+    /// evaluate the node values.
+    /// </summary>
     public class Interpreter : IAbstractSyntaxTreeNodeVisitor {
 
+        /// <summary>
+        /// The AST to interpret.
+        /// </summary>
         private AbstractSyntaxTree tree;
         private Dictionary<string, int> globalScope;
 
+        /// <summary>
+        /// Instantiates a new instance with an empty global scope.
+        /// </summary>
+        /// <param name="tree">The AST to interpret</param>
         public Interpreter(AbstractSyntaxTree tree) {
             this.tree = tree;
             globalScope = new Dictionary<string, int>();
         }
 
+        /// <summary>
+        /// Walks the AST.
+        /// </summary>
         public void Interpret() {
             tree.Accept(this);
         }
 
+        /// <summary>
+        /// Prints the current state of the global scope.
+        ///
+        /// This is mostly for debugging purposes.
+        /// </summary>
         public void PrintGlobalScope() {
             Console.WriteLine("{");
             foreach (KeyValuePair<string, int> pair in globalScope) {
@@ -25,6 +44,15 @@ namespace Rewired.Interpreter {
             Console.WriteLine("}");
         }
 
+        /// <summary>
+        /// Looks up the value of a variable stored in the global scope.
+        /// 
+        /// Should be called after `Interpret()` has been called. The function
+        /// will throw a `System.KeyNotFoundException` exception if a variable
+        /// with the name cannot be found.
+        /// </summary>
+        /// <param name="name">The name of the variable</param>
+        /// <returns>The stored value</returns>
         public int GetGlobalVar(string name) {
             return globalScope[name];
         }
@@ -41,7 +69,7 @@ namespace Rewired.Interpreter {
                 case TokenType.Minus:
                     return -(int) op.Expr.Accept(this);
                 default:
-                    throw new Exception("Unary operator not implemented: " + op.Op);
+                    throw new NotImplementedException("Unary operator not implemented: " + op.Op);
             }
         }
 
@@ -56,7 +84,7 @@ namespace Rewired.Interpreter {
                 case TokenType.Slash:
                     return (int) op.Left.Accept(this) / (int) op.Right.Accept(this);
                 default:
-                    throw new Exception("Binary operator not implemented: " + op.Op);
+                    throw new NotImplementedException("Binary operator not implemented: " + op.Op);
             }
         }
 
