@@ -177,7 +177,7 @@ namespace Rewired.Interpreter {
                 return node;
             } else if (token.Type == TokenType.Integer) {
                 lexer = Eat(lexer, TokenType.Integer);
-                return new Num(token);
+                return new Int(token);
             } else {
                 return Variable();
             }

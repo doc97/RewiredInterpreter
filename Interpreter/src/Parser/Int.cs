@@ -1,9 +1,9 @@
 namespace Rewired.Interpreter {
 
     /// <summary>
-    /// Num represents an integer AST node.
+    /// Int represents an integer AST node.
     /// </summary>
-    public class Num : AbstractSyntaxTreeNode {
+    public class Int : AbstractSyntaxTreeNode {
 
         /// <summary>
         /// The integer token.
@@ -20,7 +20,7 @@ namespace Rewired.Interpreter {
         /// Instantiates a new node instance from the token.
         /// </summary>
         /// <param name="token">The integer token</param>
-        public Num(Token token) {
+        public Int(Token token) {
             this.token = token;
         }
 

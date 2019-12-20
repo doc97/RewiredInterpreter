@@ -88,7 +88,7 @@ namespace Rewired.Interpreter {
             }
         }
 
-        public object Visit(Num num) {
+        public object Visit(Int num) {
             return int.Parse(num.Value);
         }
 

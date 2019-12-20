@@ -41,7 +41,7 @@ namespace Rewired.Interpreter {
             return leftSymbol.Type;
         }
 
-        public object Visit(Num num) {
+        public object Visit(Int num) {
             return Symbols.Lookup("INTEGER");
         }
 
