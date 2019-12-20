@@ -11,15 +11,19 @@ namespace Rewired.Interpreter {
     public class Parser {
 
         /// <summary>
-        /// origLexer is the <c>Lexer</c> passed to the constructor.
+        /// The `Lexer` that is copied before parsing.
         /// </summary>
         private Lexer origLexer;
 
         /// <summary>
-        /// lexer is the <c>Lexer</c> used during parsing, it is stateful.
+        /// The `Lexer` used during parsing, it is stateful.
         /// </summary>
         private Lexer lexer;
 
+        /// <summary>
+        /// Instantiates a new instance.
+        /// </summary>
+        /// <param name="lexer"></param>
         public Parser(Lexer lexer) {
             origLexer = lexer;
         }
