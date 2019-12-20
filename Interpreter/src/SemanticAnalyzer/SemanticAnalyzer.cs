@@ -4,10 +4,10 @@ namespace Rewired.Interpreter {
 
     public class SemanticAnalyzer : IAbstractSyntaxTreeNodeVisitor {
 
-        private AbstractSyntaxTree tree;
+        private AbstractSyntaxTreeNode tree;
         public SymbolTable Symbols { get; }
 
-        public SemanticAnalyzer(AbstractSyntaxTree tree) {
+        public SemanticAnalyzer(AbstractSyntaxTreeNode tree) {
             this.tree = tree;
             Symbols = new SymbolTable();
             InitBuiltInTypes();
@@ -19,7 +19,7 @@ namespace Rewired.Interpreter {
         }
 
         public void Analyze() {
-            tree.Accept(this);
+            tree.VisitNode(this);
         }
 
         #region IAbstractSyntaxTreeNodeVisitor
@@ -28,12 +28,12 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(UnaryOp op) {
-            return op.Expr.Accept(this);
+            return op.Expr.VisitNode(this);
         }
 
         public object Visit(BinOp op) {
-            Symbol leftSymbol = (Symbol) op.Left.Accept(this);
-            Symbol rightSymbol = (Symbol) op.Right.Accept(this);
+            Symbol leftSymbol = (Symbol) op.Left.VisitNode(this);
+            Symbol rightSymbol = (Symbol) op.Right.VisitNode(this);
             if (leftSymbol != rightSymbol) {
                 throw new Exception(string.Format("Type mismatch: Cannot perform '{0} {1} {2}",
                     leftSymbol.TypeName, op.Op.Value, rightSymbol.TypeName));
@@ -46,7 +46,7 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Assign assign) {
-            Symbol rightType = (Symbol) assign.Right.Accept(this);
+            Symbol rightType = (Symbol) assign.Right.VisitNode(this);
 
             string varName = ((Var) assign.Left).Value;
             Symbol varType = Symbols.Lookup(varName) ?? rightType;
@@ -64,8 +64,8 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Compound comp) {
-            foreach (AbstractSyntaxTree child in comp.Children) {
-                child.Accept(this);
+            foreach (AbstractSyntaxTreeNode child in comp.Children) {
+                child.VisitNode(this);
             }
             return null;
         }

@@ -1,16 +1,16 @@
 namespace Rewired.Interpreter {
 
-    public class UnaryOp : AbstractSyntaxTree {
+    public class UnaryOp : AbstractSyntaxTreeNode {
 
-        public AbstractSyntaxTree Expr { get; }
+        public AbstractSyntaxTreeNode Expr { get; }
         public Token Op { get; }
 
-        public UnaryOp(Token op, AbstractSyntaxTree expr) {
+        public UnaryOp(Token op, AbstractSyntaxTreeNode expr) {
             Op = op;
             Expr = expr;
         }
 
-        public override object Accept(IAbstractSyntaxTreeNodeVisitor visitor) {
+        public override object VisitNode(IAbstractSyntaxTreeNodeVisitor visitor) {
             return visitor.Visit(this);
         }
     }

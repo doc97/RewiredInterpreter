@@ -1,14 +1,14 @@
 namespace Rewired.Interpreter {
 
-    public class Compound : AbstractSyntaxTree {
+    public class Compound : AbstractSyntaxTreeNode {
 
-        public AbstractSyntaxTree[] Children { get; }
+        public AbstractSyntaxTreeNode[] Children { get; }
 
-        public Compound(AbstractSyntaxTree[] children) {
+        public Compound(AbstractSyntaxTreeNode[] children) {
             Children = children;
         }
 
-        public override object Accept(IAbstractSyntaxTreeNodeVisitor visitor) {
+        public override object VisitNode(IAbstractSyntaxTreeNodeVisitor visitor) {
             return visitor.Visit(this);
         }
     }

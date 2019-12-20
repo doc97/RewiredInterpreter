@@ -1,20 +1,20 @@
 namespace Rewired.Interpreter {
 
-    public class BinOp : AbstractSyntaxTree {
+    public class BinOp : AbstractSyntaxTreeNode {
 
-        public AbstractSyntaxTree Left { get; }
-        public AbstractSyntaxTree Right { get; }
+        public AbstractSyntaxTreeNode Left { get; }
+        public AbstractSyntaxTreeNode Right { get; }
         public Token Op { get; }
 
-        public BinOp(AbstractSyntaxTree left,
+        public BinOp(AbstractSyntaxTreeNode left,
                      Token op,
-                     AbstractSyntaxTree right) {
+                     AbstractSyntaxTreeNode right) {
             Left = left;
             Op = op; 
             Right = right;
         }
 
-        public override object Accept(IAbstractSyntaxTreeNodeVisitor visitor) {
+        public override object VisitNode(IAbstractSyntaxTreeNodeVisitor visitor) {
             return visitor.Visit(this);
         }
     }

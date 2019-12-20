@@ -3,6 +3,7 @@ using Rewired.Interpreter;
 
 public class Program {
 
+    // Indicates whether debug information should be shown
     public const bool DEBUG = true;
 
     public static void Main(string[] args) {
@@ -12,7 +13,7 @@ public class Program {
             try {
                 Lexer lexer = new Lexer(input);
                 Parser parser = new Parser(lexer);
-                AbstractSyntaxTree tree = parser.Parse();
+                AbstractSyntaxTreeNode tree = parser.Parse();
 
                 SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
                 analyzer.Analyze();

@@ -1,6 +1,6 @@
 namespace Rewired.Interpreter {
-    public class NoOp : AbstractSyntaxTree {
-        public override object Accept(IAbstractSyntaxTreeNodeVisitor visitor) {
+    public class NoOp : AbstractSyntaxTreeNode {
+        public override object VisitNode(IAbstractSyntaxTreeNodeVisitor visitor) {
             return visitor.Visit(this);
         }
     }

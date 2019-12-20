@@ -1,6 +1,6 @@
 namespace Rewired.Interpreter {
 
-    public class Var : AbstractSyntaxTree {
+    public class Var : AbstractSyntaxTreeNode {
 
         public Token Token { get; }
         public string Value { get => Token.Value; }
@@ -9,7 +9,7 @@ namespace Rewired.Interpreter {
             Token = token;
         }
 
-        public override object Accept(IAbstractSyntaxTreeNodeVisitor visitor) {
+        public override object VisitNode(IAbstractSyntaxTreeNodeVisitor visitor) {
             return visitor.Visit(this);
         }
     }
