@@ -13,6 +13,10 @@ namespace Rewired.Interpreter {
         /// The AST to interpret.
         /// </summary>
         private AbstractSyntaxTreeNode tree;
+
+        /// <summary>
+        /// The dictionary works as the global memory of the program during runtime.
+        /// </summary>
         private Dictionary<string, int> globalScope;
 
         /// <summary>
