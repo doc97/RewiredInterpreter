@@ -105,10 +105,8 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Var var) {
-            if (globalScope.ContainsKey(var.Value)) {
-                return globalScope[var.Value];
-            }
-            throw new Exception("Variable '" + var.Value + "' does not exist!");
+            // The semantic analyzer checks for unused variables
+            return globalScope[var.Value];
         }
 
         public object Visit(Compound comp) {
