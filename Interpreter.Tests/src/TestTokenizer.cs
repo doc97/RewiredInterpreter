@@ -36,5 +36,20 @@ namespace Rewired.Interpreter.Tests {
             Tokenizer tokenizer = new Tokenizer(text).Next();
             return tokenizer.Token.Value;
         }
+
+        [TestCase("a1", ExpectedResult=TokenType.Id)]
+        [TestCase("123", ExpectedResult=TokenType.Integer)]
+        [TestCase("+", ExpectedResult=TokenType.Plus)]
+        [TestCase("-", ExpectedResult=TokenType.Minus)]
+        [TestCase("*", ExpectedResult=TokenType.Asterisk)]
+        [TestCase("/", ExpectedResult=TokenType.Slash)]
+        [TestCase("(", ExpectedResult=TokenType.LeftParenthesis)]
+        [TestCase(")", ExpectedResult=TokenType.RightParenthesis)]
+        [TestCase(";", ExpectedResult=TokenType.SemiColon)]
+        [TestCase(":=", ExpectedResult=TokenType.Assign)]
+        public TokenType Next_RecognizeTokenType(string text) {
+            Tokenizer tokenizer = new Tokenizer(text).Next();
+            return tokenizer.Token.Type;
+        }
     }
 }

@@ -110,14 +110,10 @@ namespace Rewired.Interpreter {
         /// <param name="text">The text to peek</param>
         /// <param name="length">The amount of characters to peek</param>
         /// <returns>
-        /// The string of peeked characters or "" if the text is empty.
+        /// The string of peeked characters or "" if the text is shorter than length.
         /// </returns>
         private string NextString(string text, int length) {
-            if (text.Length <= length) {
-                return "";
-            } else {
-                return text.Substring(0, length);
-            }
+            return text.Length < length ? "" : text.Substring(0, length);
         }
 
         /// <summary>
