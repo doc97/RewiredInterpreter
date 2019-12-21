@@ -1,6 +1,3 @@
-using System.Diagnostics;
-using System;
-using System.Reflection.Metadata.Ecma335;
 using NUnit.Framework;
 
 namespace Rewired.Interpreter.Tests {
