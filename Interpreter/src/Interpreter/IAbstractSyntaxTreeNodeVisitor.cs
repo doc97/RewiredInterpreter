@@ -15,6 +15,7 @@ namespace Rewired.Interpreter {
         object Visit(Assign assign);
         object Visit(Var var);
         object Visit(Compound comp);
+        object Visit(FuncDecl func);
     }
 
 }

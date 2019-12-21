@@ -61,8 +61,11 @@ checked during runtime.
 Here is the grammar that the interpreter currently supports:
 
 ```
-COMPOUND -> STATEMENT+
-STATEMENT -> (ASSIGNMENT | EMPTY) ";"
+PROGRAM -> (DECLARATION | STATEMENT_LIST)*
+DECLARATION -> "func" ID "(" ")" BLOCK
+BLOCK -> "{" STATEMENT_LIST "}"
+STATEMENT_LIST -> STATEMENT+
+STATEMENT -> ASSIGNMENT ";" | EMPTY
 ASSIGNMENT -> VAR ":=" EXPR
 VAR -> ID
 EMPTY -> ""

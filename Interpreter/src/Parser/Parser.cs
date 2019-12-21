@@ -29,14 +29,14 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Parse constructs an Abstract Syntax Tree (AST) with the compound statement as the root node.
+        /// Parse constructs an Abstract Syntax Tree (AST) with the Program as the root node.
         /// </summary>
         /// <returns>The constructed AST</returns>
         /// <exception>Throws a <c>System.Exception</c> if there are syntax errors.</exception>
         public AbstractSyntaxTreeNode Parse() {
             tokenizer = origTokenizer.Next();
 
-            AbstractSyntaxTreeNode node = Compound();
+            AbstractSyntaxTreeNode node = Program();
             if (tokenizer.Token.Type != TokenType.Eof) {
                 throw new Exception("Invalid syntax");
             }
@@ -45,15 +45,60 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Compound implements the COMPOUND grammar rule.
-        ///
-        /// COMPOUND -> STATEMENT+
+        /// Program implements the PROGRAM grammar rule.
+        /// 
+        /// PROGRAM -> (DECLARATION | STATEMENT_LIST)*
         /// </summary>
-        private AbstractSyntaxTreeNode Compound() {
+        /// <returns></returns>
+        private AbstractSyntaxTreeNode Program() {
+            List<AbstractSyntaxTreeNode> nodes = new List<AbstractSyntaxTreeNode>();
+            while (tokenizer.Token.Type != TokenType.Eof) {
+                if (tokenizer.Token.Type == TokenType.Func) {
+                    nodes.Add(Declaration());
+                } else {
+                    nodes.Add(StatementList());
+                }
+            }
+            return new Compound(nodes.ToArray());
+        }
+
+        /// <summary>
+        /// Declaration implements the DECLARATION grammar rule.
+        /// 
+        /// DECLARATION -> "func" ID "(" ")" BLOCK
+        /// </summary>
+        private AbstractSyntaxTreeNode Declaration() {
+            tokenizer = Eat(tokenizer, TokenType.Func);
+            string funcName = tokenizer.Token.Value;
+            tokenizer = Eat(tokenizer, TokenType.Id);
+            tokenizer = Eat(tokenizer, TokenType.LeftParenthesis);
+            tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
+            return new FuncDecl(funcName, Block());
+        }
+
+        /// <summary>
+        /// Block implements the BLOCK grammar rule.
+        /// 
+        /// BLOCK -> "{" COMPOUND "}"
+        /// </summary>
+        private AbstractSyntaxTreeNode Block() {
+            tokenizer = Eat(tokenizer, TokenType.LeftCurlyBracket);
+            AbstractSyntaxTreeNode statements = StatementList();
+            tokenizer = Eat(tokenizer, TokenType.RightCurlyBracket);
+            return statements;
+        }
+
+        /// <summary>
+        /// StatementList implements the STATEMENT_LIST grammar rule.
+        ///
+        /// STATEMENT_LIST -> STATEMENT+
+        /// </summary>
+        private AbstractSyntaxTreeNode StatementList() {
             List<AbstractSyntaxTreeNode> nodes = new List<AbstractSyntaxTreeNode>();
             nodes.Add(Statement());
 
-            while (tokenizer.Token.Type != TokenType.Eof) {
+            while (tokenizer.Token.Type != TokenType.Eof
+                && tokenizer.Token.Type != TokenType.RightCurlyBracket) {
                 nodes.Add(Statement());
             }
 
@@ -63,16 +108,16 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Statement implements the STATEMENT grammar rule.
         ///
-        /// Rule: STATEMENT -> (ASSIGNMENT | EMPTY) ";"
+        /// Rule: STATEMENT -> ASSIGNMENT ";" | EMPTY
         /// </summary>
         private AbstractSyntaxTreeNode Statement() {
             AbstractSyntaxTreeNode node;
             if (tokenizer.Token.Type == TokenType.Id) {
                 node = AssignmentStatement();
+                tokenizer = Eat(tokenizer, TokenType.SemiColon);
             } else {
                 node = EmptyStatement();
             }
-            tokenizer = Eat(tokenizer, TokenType.SemiColon);
             return node;
         }
 

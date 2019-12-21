@@ -96,6 +96,10 @@ namespace Rewired.Interpreter {
             }
             return null;
         }
+
+        public object Visit(FuncDecl func) {
+            return null;
+        }
         #endregion
     }
 
