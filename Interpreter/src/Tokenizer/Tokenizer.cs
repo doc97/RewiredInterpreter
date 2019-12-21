@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Rewired.Interpreter {
 
@@ -6,6 +7,11 @@ namespace Rewired.Interpreter {
     /// Tokenizer takes a string of text and converts it into a stream of tokens.
     /// </summary>
     public class Tokenizer {
+
+        /// <summary>
+        /// Contains the reserved keywords of the language.
+        /// </summary>
+        private Dictionary<string, Token> reservedKeywords;
 
         /// <summary>
         /// Gets the source text. 
@@ -35,6 +41,9 @@ namespace Rewired.Interpreter {
         private Tokenizer(string text, Token token) {
             Text = text;
             Token = token;
+            reservedKeywords = new Dictionary<string, Token>() {
+                { "func", new Token(TokenType.Func, "func") }
+            };
         }
 
         /// <summary>
@@ -60,7 +69,7 @@ namespace Rewired.Interpreter {
                     currentChar = NextChar(text);
                     continue;
                 } else if (char.IsLetter(currentChar)) {
-                    token = new Token(TokenType.Id, GetId(text));
+                    token = GetId(text);
                 } else if ("0123456789".Contains(currentChar)) {
                     token = new Token(TokenType.Integer, GetInteger(text));
                 } else if (currentChar == '+') {
@@ -75,6 +84,10 @@ namespace Rewired.Interpreter {
                     token = new Token(TokenType.LeftParenthesis, "(");
                 } else if (currentChar == ')') {
                     token = new Token(TokenType.RightParenthesis, ")");
+                } else if (currentChar == '{') {
+                    token = new Token(TokenType.LeftCurlyBracket, "{");
+                } else if (currentChar == '}') {
+                    token = new Token(TokenType.RightCurlyBracket, "}");
                 } else if (currentChar == ';') {
                     token = new Token(TokenType.SemiColon, ";");
                 } else if (NextString(text, 2) == ":=") {
@@ -126,12 +139,28 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Gets the next string where the characters are letters or digits.
+        /// Checks if the next word in the text is one of the reserved ones.
+        /// </summary>
+        /// <param name="text">The text to check</param>
+        /// <returns>True if is a reserved keyword, false otherwise.</returns>
+        private bool IsReservedKeyword(string text) {
+            string word = GetMultiCharValue(text, c => char.IsLetter(c));
+            return reservedKeywords.ContainsKey(word);
+        }
+
+        /// <summary>
+        /// Gets the next token which consists of alphanumeric characters.
         /// </summary>
         /// <param name="text">The text to traverse</param>
-        /// <returns>The characters as a string.</returns>
-        private string GetId(string text) {
-            return GetMultiCharValue(text, c => char.IsLetterOrDigit(c));
+        /// <returns>The token, either an Id or a reserved keyword token.</returns>
+        private Token GetId(string text) {
+            string word = GetMultiCharValue(text, c => char.IsLetter(c));
+            if (reservedKeywords.ContainsKey(word)) {
+                return reservedKeywords[word];
+            }
+
+            string id = GetMultiCharValue(text, c => char.IsLetterOrDigit(c));
+            return new Token(TokenType.Id, id);
         }
         
         /// <summary>

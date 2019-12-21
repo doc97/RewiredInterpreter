@@ -11,9 +11,12 @@ namespace Rewired.Interpreter {
         Asterisk,
         LeftParenthesis,
         RightParenthesis,
+        LeftCurlyBracket,
+        RightCurlyBracket,
         Assign,
         SemiColon,
         Id,
+        Func,
         Eof
     }
 }

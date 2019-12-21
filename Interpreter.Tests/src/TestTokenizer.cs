@@ -30,13 +30,6 @@ namespace Rewired.Interpreter.Tests {
             return tokenizer.Token.Value;
         }
 
-        [TestCase("12", ExpectedResult="12")]
-        [TestCase("143+2", ExpectedResult="143")]
-        public string Next_HandlesMultiDigitNumber(string text) {
-            Tokenizer tokenizer = new Tokenizer(text).Next();
-            return tokenizer.Token.Value;
-        }
-
         [TestCase("a1", ExpectedResult=TokenType.Id)]
         [TestCase("123", ExpectedResult=TokenType.Integer)]
         [TestCase("+", ExpectedResult=TokenType.Plus)]
@@ -45,11 +38,32 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("/", ExpectedResult=TokenType.Slash)]
         [TestCase("(", ExpectedResult=TokenType.LeftParenthesis)]
         [TestCase(")", ExpectedResult=TokenType.RightParenthesis)]
+        [TestCase("{", ExpectedResult=TokenType.LeftCurlyBracket)]
+        [TestCase("}", ExpectedResult=TokenType.RightCurlyBracket)]
         [TestCase(";", ExpectedResult=TokenType.SemiColon)]
         [TestCase(":=", ExpectedResult=TokenType.Assign)]
-        public TokenType Next_RecognizeTokenType(string text) {
+        [TestCase("func", ExpectedResult=TokenType.Func)]
+        public TokenType Next_CorrectTokenType(string text) {
             Tokenizer tokenizer = new Tokenizer(text).Next();
             return tokenizer.Token.Type;
+        }
+
+        [TestCase("a1", ExpectedResult="a1")]
+        [TestCase("123", ExpectedResult="123")]
+        [TestCase("+", ExpectedResult="+")]
+        [TestCase("-", ExpectedResult="-")]
+        [TestCase("*", ExpectedResult="*")]
+        [TestCase("/", ExpectedResult="/")]
+        [TestCase("(", ExpectedResult="(")]
+        [TestCase(")", ExpectedResult=")")]
+        [TestCase("{", ExpectedResult="{")]
+        [TestCase("}", ExpectedResult="}")]
+        [TestCase(";", ExpectedResult=";")]
+        [TestCase(":=", ExpectedResult=":=")]
+        [TestCase("func", ExpectedResult="func")]
+        public string Next_CorrectTokenValue(string text) {
+            Tokenizer tokenizer = new Tokenizer(text).Next();
+            return tokenizer.Token.Value;
         }
     }
 }
