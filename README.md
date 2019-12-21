@@ -45,8 +45,7 @@ the semantic analyzer and the interpreter.
 
 The source code is given to the `Tokenizer` that converts the text into 
 a stream of so called tokens. The `Parser` then takes these tokens and
-constructs an abstract syntax tree made up of symbols, which is an 
-"intermediate form". 
+constructs an abstract syntax tree, which is an "intermediate form".
 
 Instead of combining the parser and the interpreter, they are separated 
 for a couple of reasons. The first being, that it nicely separates the 
