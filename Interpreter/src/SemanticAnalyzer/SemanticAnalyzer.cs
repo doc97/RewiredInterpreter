@@ -16,10 +16,9 @@ namespace Rewired.Interpreter {
         private AbstractSyntaxTreeNode tree;
 
         /// <summary>
-        /// Gets the symbol table.
+        /// The current scope's symbol table.
         /// </summary>
-        /// <value></value>
-        public SymbolTable Symbols { get; }
+        private ScopedSymbolTable currentScope;
 
         /// <summary>
         /// Instantiates a new instance with built-in symbols added.
@@ -27,17 +26,8 @@ namespace Rewired.Interpreter {
         /// <param name="tree">The AST to analyze</param>
         public SemanticAnalyzer(AbstractSyntaxTreeNode tree) {
             this.tree = tree;
-            Symbols = new SymbolTable();
-            InitBuiltInTypes();
         }
 
-        /// <summary>
-        /// Adds built-in types to the symbol table.
-        /// </summary>
-        private void InitBuiltInTypes() {
-            Symbols.Insert(new BuiltInTypeSymbol("INTEGER"));
-            Symbols.Insert(new BuiltInTypeSymbol("REAL"));
-        }
 
         /// <summary>
         /// Walks the AST.
@@ -47,6 +37,23 @@ namespace Rewired.Interpreter {
         /// </exception>
         public void Analyze() {
             tree.VisitNode(this);
+        }
+
+        /// <summary>
+        /// Looks up a symbol in the current scope.
+        /// </summary>
+        /// <param name="name">The name of the symbol</param>
+        /// <returns>The symbol if it is found, otherwise null</returns>
+        public Symbol LookupSymbol(string name) {
+            return currentScope.Lookup(name);
+        }
+
+        /// <summary>
+        /// Prints out the current scope.
+        /// </summary>
+        public void PrintScopeInfo() {
+            Console.WriteLine("--== Semantic Analysis ==--");
+            Console.WriteLine(currentScope);
         }
 
         #region IAbstractSyntaxTreeNodeVisitor
@@ -69,21 +76,21 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Int num) {
-            return Symbols.Lookup("INTEGER");
+            return currentScope.Lookup("INTEGER");
         }
 
         public object Visit(Assign assign) {
             Symbol rightType = (Symbol) assign.Right.VisitNode(this);
 
             string varName = ((Var) assign.Left).Value;
-            Symbol varType = Symbols.Lookup(varName) ?? rightType;
-            Symbols.Insert(new VarSymbol(varName, varType));
+            Symbol varType = currentScope.Lookup(varName) ?? rightType;
+            currentScope.Insert(new VarSymbol(varName, varType));
             return null;
         }
 
         public object Visit(Var var) {
             string varName = var.Value;
-            Symbol varSymbol = Symbols.Lookup(varName);
+            Symbol varSymbol = currentScope.Lookup(varName);
             if (varSymbol == null) {
                 throw new Exception(string.Format("Error: Identifier '{0}' not found", varName));
             }
@@ -102,7 +109,16 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Program program) {
-            return program.Block.VisitNode(this);
+            ScopedSymbolTable globalScope = new ScopedSymbolTable("Global", 0, null);
+            globalScope.InitBuiltInTypes();
+
+            currentScope = globalScope;
+            object retVal = program.Block.VisitNode(this);
+            /* The current scope is not exited with:
+             *   currentScope = currentScope.Parent
+             * because it is needed for testing.
+            */
+            return retVal;
         }
         #endregion
     }

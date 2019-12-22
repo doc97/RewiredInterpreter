@@ -21,7 +21,7 @@ namespace Rewired.Interpreter.Tests {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
             analyzer.Analyze();
-            Symbol s = analyzer.Symbols.Lookup("a");
+            Symbol s = analyzer.LookupSymbol("a");
             return s.TypeName;
         }
     }

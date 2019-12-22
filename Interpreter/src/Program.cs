@@ -18,8 +18,7 @@ public class Program {
                 SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
                 analyzer.Analyze();
                 if (DEBUG) {
-                    Console.WriteLine("--== Semantic Analysis ==--");
-                    Console.WriteLine(analyzer.Symbols);
+                    analyzer.PrintScopeInfo();
                 }
 
                 Interpreter interpreter = new Interpreter(tree);

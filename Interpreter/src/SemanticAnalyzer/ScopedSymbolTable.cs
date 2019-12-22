@@ -4,9 +4,9 @@ using System.Text;
 namespace Rewired.Interpreter {
 
     /// <summary>
-    /// SymbolTable is a dictionary wrapper for symbols.
+    /// ScopedSymbolTable is a dictionary wrapper for symbols.
     /// </summary>
-    public class SymbolTable {
+    public class ScopedSymbolTable {
 
         /// <summary>
         /// The container for the symbols.
@@ -14,10 +14,37 @@ namespace Rewired.Interpreter {
         private Dictionary<string, Symbol> symbols;
 
         /// <summary>
+        /// Gets the name of the symbol table.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Gets the scope level of the symbol table.
+        /// </summary>
+        /// <value>Level 1 is the global scope</value>
+        public int Level { get; }
+
+        /// <summary>
+        /// Gets the parent scope.
+        /// </summary>
+        public ScopedSymbolTable Parent { get; }
+
+        /// <summary>
         /// Instantiates a new empty instance.
         /// </summary>
-        public SymbolTable() {
+        public ScopedSymbolTable(string name, int level, ScopedSymbolTable parent) {
+            Name = name;
+            Level = level;
+            Parent = parent;
             symbols = new Dictionary<string, Symbol>();
+        }
+
+        /// <summary>
+        /// Adds built-in types to the symbol table.
+        /// </summary>
+        public void InitBuiltInTypes() {
+            Insert(new BuiltInTypeSymbol("INTEGER"));
+            Insert(new BuiltInTypeSymbol("REAL"));
         }
 
         /// <summary>
@@ -29,7 +56,8 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Gets a symbol by name.
+        /// Searches for a symbol by name in the current scope and if not found,
+        /// it searches for it in the parent scope.
         /// </summary>
         /// <param name="name">The name to search for</param>
         /// <returns>The stored symbol or null if the name cannot be found.</returns>
@@ -37,7 +65,8 @@ namespace Rewired.Interpreter {
             if (symbols.ContainsKey(name)) {
                 return symbols[name];
             }
-            return null;
+
+            return Parent?.Lookup(name);
         }
 
         public override string ToString() {
