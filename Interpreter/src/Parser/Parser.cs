@@ -59,7 +59,8 @@ namespace Rewired.Interpreter {
                     nodes.Add(StatementList());
                 }
             }
-            return new Compound(nodes.ToArray());
+            AbstractSyntaxTreeNode block = new Compound(nodes.ToArray());
+            return new Program("", block);
         }
 
         /// <summary>

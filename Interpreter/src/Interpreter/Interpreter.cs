@@ -119,6 +119,10 @@ namespace Rewired.Interpreter {
         public object Visit(FuncDecl func) {
             return null;
         }
+
+        public object Visit(Program program) {
+            return program.Block.VisitNode(this);
+        }
         #endregion
     }
 

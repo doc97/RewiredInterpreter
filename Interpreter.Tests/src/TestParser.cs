@@ -8,20 +8,20 @@ namespace Rewired.Interpreter.Tests {
         [Test]
         public void Parse_EmptyStatement() {
             Parser parser = new Parser(new Tokenizer(""));
-            Assert.True(parser.Parse() is Compound);
+            Assert.True(parser.Parse() is Program);
         }
 
         [Test]
         public void Parse_HasNoState() {
             Parser parser = new Parser(new Tokenizer("a := 1;"));
-            Assert.True(parser.Parse() is Compound);
-            Assert.True(parser.Parse() is Compound);
+            Assert.True(parser.Parse() is Program);
+            Assert.True(parser.Parse() is Program);
         }
 
         [Test]
         public void Parse_MultipleStatements() {
             Parser parser = new Parser(new Tokenizer("a := 1; b := 2;"));
-            Assert.True(parser.Parse() is Compound);
+            Assert.True(parser.Parse() is Program);
         }
 
         [TestCase("func A() { }", ExpectedResult=true)]
@@ -86,6 +86,10 @@ namespace Rewired.Interpreter.Tests {
             public object Visit(FuncDecl func) {
                 FuncDeclVisited = true;
                 return null;
+            }
+
+            public object Visit(Program program) {
+                return program.Block.VisitNode(this);
             }
         }
     }
