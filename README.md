@@ -61,7 +61,10 @@ Here is the grammar that the interpreter currently supports:
 
 ```
 PROGRAM -> (DECLARATION | STATEMENT_LIST)*
-DECLARATION -> "func" ID "(" ")" BLOCK
+DECLARATION -> "func" ID "(" PARAMS ")" BLOCK
+PARAMS -> PARAM ("," PARAM)* | EMPTY
+PARAM -> TYPE ID
+TYPE -> "int" | "float"
 BLOCK -> "{" STATEMENT_LIST "}"
 STATEMENT_LIST -> STATEMENT+
 STATEMENT -> ASSIGNMENT ";" | EMPTY
@@ -73,11 +76,11 @@ TERM -> FACTOR (("*" | "/") FACTOR)*
 FACTOR -> "+" FACTOR
         | "-" FACTOR
         | "(" EXPR ")"
-        | INTEGER
+        | INTEGER_CONST
         | VAR
 ```
 
-`ID`: An identifier (name) of a variable
+`ID`: An identifier (name) of a variable or function
 
 [1]: https://dotnet.microsoft.com/download
 [2]: https://github.com/OmniSharp/omnisharp-vscode

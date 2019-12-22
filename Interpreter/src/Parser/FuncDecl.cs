@@ -10,6 +10,8 @@ namespace Rewired.Interpreter {
         /// </summary>
         public string Name { get; }
 
+        public AbstractSyntaxTreeNode[] Parameters { get; }
+
         /// <summary>
         /// Gets the node containing the statements.
         /// </summary>
@@ -21,8 +23,9 @@ namespace Rewired.Interpreter {
         /// </summary>
         /// <param name="name">The name of the function</param>
         /// <param name="block">A `Compound` node containing the statements</param>
-        public FuncDecl(string name, AbstractSyntaxTreeNode block) {
+        public FuncDecl(string name, AbstractSyntaxTreeNode[] parameters, AbstractSyntaxTreeNode block) {
             Name = name;
+            Parameters = parameters;
             Block = block;
         }
 

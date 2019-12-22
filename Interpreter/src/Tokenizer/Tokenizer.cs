@@ -31,7 +31,7 @@ namespace Rewired.Interpreter {
         /// The current token is of the type Eof.
         /// </summary>
         /// <param name="text">The text to convert</param>
-        public Tokenizer(string text) : this(text, new Token(TokenType.Eof, "")) {}
+        public Tokenizer(string text) : this(text, new Token(TokenType.Eof, "")) { }
 
         /// <summary>
         /// Instantiates a new instance out of the source text and token.
@@ -42,7 +42,9 @@ namespace Rewired.Interpreter {
             Text = text;
             Token = token;
             reservedKeywords = new Dictionary<string, Token>() {
-                { "func", new Token(TokenType.Func, "func") }
+                { "func", new Token(TokenType.Func, "func") },
+                { "int", new Token(TokenType.IntegerType, "int") },
+                { "float", new Token(TokenType.FloatType, "float") },
             };
         }
 
@@ -71,7 +73,7 @@ namespace Rewired.Interpreter {
                 } else if (char.IsLetter(currentChar)) {
                     token = GetId(text);
                 } else if ("0123456789".Contains(currentChar)) {
-                    token = new Token(TokenType.Integer, GetInteger(text));
+                    token = new Token(TokenType.IntegerConst, GetInteger(text));
                 } else if (currentChar == '+') {
                     token = new Token(TokenType.Plus, "+");
                 } else if (currentChar == '-') {
@@ -162,7 +164,7 @@ namespace Rewired.Interpreter {
             string id = GetMultiCharValue(text, c => char.IsLetterOrDigit(c));
             return new Token(TokenType.Id, id);
         }
-        
+
         /// <summary>
         /// Gets the next string where the characters are digits.
         /// </summary>

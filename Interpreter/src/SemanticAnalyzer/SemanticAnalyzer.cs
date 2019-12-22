@@ -97,6 +97,15 @@ namespace Rewired.Interpreter {
             return varSymbol.Type;
         }
 
+        public object Visit(Type type) {
+            return null;
+        }
+
+        public object Visit(Parameter param) {
+            param.Type.VisitNode(this);
+            return null;
+        }
+
         public object Visit(Compound comp) {
             foreach (AbstractSyntaxTreeNode child in comp.Children) {
                 child.VisitNode(this);

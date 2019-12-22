@@ -109,6 +109,14 @@ namespace Rewired.Interpreter {
             return globalScope[var.Value];
         }
 
+        public object Visit(Type type) {
+            return null;
+        }
+
+        public object Visit(Parameter param) {
+            return null;
+        }
+
         public object Visit(Compound comp) {
             foreach (AbstractSyntaxTreeNode child in comp.Children) {
                 child.VisitNode(this);

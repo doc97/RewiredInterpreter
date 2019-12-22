@@ -66,15 +66,63 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Declaration implements the DECLARATION grammar rule.
         /// 
-        /// DECLARATION -> "func" ID "(" ")" BLOCK
+        /// DECLARATION -> "func" ID "(" PARAMS ")" BLOCK
         /// </summary>
         private AbstractSyntaxTreeNode Declaration() {
             tokenizer = Eat(tokenizer, TokenType.Func);
             string funcName = tokenizer.Token.Value;
             tokenizer = Eat(tokenizer, TokenType.Id);
             tokenizer = Eat(tokenizer, TokenType.LeftParenthesis);
+            AbstractSyntaxTreeNode[] parameters = Parameters();
             tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
-            return new FuncDecl(funcName, Block());
+            return new FuncDecl(funcName, parameters, Block());
+        }
+
+        /// <summary>
+        /// Parameters implements the PARAMETERS grammar rule.
+        /// 
+        /// PARAMETERS -> PARAMETER ("," PARAMETERS)* | EMPTY
+        /// </summary>
+        private AbstractSyntaxTreeNode[] Parameters() {
+            List<AbstractSyntaxTreeNode> parameters = new List<AbstractSyntaxTreeNode>();
+            if (tokenizer.Token.Type == TokenType.IntegerType || tokenizer.Token.Type == TokenType.FloatType) {
+                parameters.Add(Parameter());
+            } else {
+                return parameters.ToArray();
+            }
+
+            while (tokenizer.Token.Type == TokenType.Comma) {
+                tokenizer = Eat(tokenizer, TokenType.Comma);
+                parameters.Add(Parameter());
+            }
+            return parameters.ToArray();
+        }
+
+        /// <summary>
+        /// Parameter implements the PARAMETER grammar rule.
+        /// 
+        /// PARAMETER -> TYPE ID
+        /// </summary>
+        private AbstractSyntaxTreeNode Parameter() {
+            AbstractSyntaxTreeNode type = Type();
+            Token name = tokenizer.Token;
+            tokenizer = Eat(tokenizer, TokenType.Id);
+            return new Parameter(type, new Var(name));
+        }
+
+        /// <summary>
+        /// Type implements the TYPE grammar rule.
+        /// 
+        /// TYPE -> "int" | "float"
+        /// </summary>
+        private AbstractSyntaxTreeNode Type() {
+            if (tokenizer.Token.Type == TokenType.IntegerType) {
+                tokenizer = Eat(tokenizer, TokenType.IntegerType);
+                return new Type(tokenizer.Token);
+            } else {
+                tokenizer = Eat(tokenizer, TokenType.FloatType);
+                return new Type(tokenizer.Token);
+            }
         }
 
         /// <summary>
@@ -205,7 +253,7 @@ namespace Rewired.Interpreter {
         /// Rule: FACTOR -> "+" FACTOR
         ///               | "-" FACTOR
         ///               | "(" EXPR ")"
-        ///               | INTEGER
+        ///               | INTEGER_CONST
         ///               | VAR
         /// </summary>
         private AbstractSyntaxTreeNode Factor() {
@@ -221,8 +269,8 @@ namespace Rewired.Interpreter {
                 AbstractSyntaxTreeNode node = Expression();
                 tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
                 return node;
-            } else if (token.Type == TokenType.Integer) {
-                tokenizer = Eat(tokenizer, TokenType.Integer);
+            } else if (token.Type == TokenType.IntegerConst) {
+                tokenizer = Eat(tokenizer, TokenType.IntegerConst);
                 return new Int(token);
             } else {
                 return Variable();

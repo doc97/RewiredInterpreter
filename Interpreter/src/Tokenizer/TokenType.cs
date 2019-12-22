@@ -4,7 +4,10 @@ namespace Rewired.Interpreter {
     /// The different types of tokens recognized by the `Tokenizer`.
     /// </summary>
     public enum TokenType {
-        Integer,
+        IntegerType,
+        FloatType,
+        IntegerConst,
+        FloatConst,
         Plus,
         Minus,
         Slash,
@@ -15,6 +18,7 @@ namespace Rewired.Interpreter {
         RightCurlyBracket,
         Assign,
         SemiColon,
+        Comma,
         Id,
         Func,
         Eof
