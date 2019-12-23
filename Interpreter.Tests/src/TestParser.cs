@@ -44,6 +44,16 @@ namespace Rewired.Interpreter.Tests {
             Assert.True(visitor.ParameterVisited);
         }
 
+        [Test]
+        public void Parse_FunctionDecl_MultipleParams() {
+            Parser parser = new Parser(new Tokenizer("func A(int a, int b) {}"));
+            AbstractSyntaxTreeNode root = parser.Parse();
+            TestASTNodeVisitor visitor = new TestASTNodeVisitor();
+            root.VisitNode(visitor);
+            Assert.True(visitor.TypeVisited);
+            Assert.AreEqual(visitor.ParameterVisitedCount, 2);
+        }
+
         private class TestASTNodeVisitor : IAbstractSyntaxTreeNodeVisitor {
 
             public bool NoOpVisited { get; private set; }
@@ -53,7 +63,8 @@ namespace Rewired.Interpreter.Tests {
             public bool AssignVisited { get; private set; }
             public bool VarVisited { get; private set; }
             public bool TypeVisited { get; private set; }
-            public bool ParameterVisited { get; private set; }
+            public int ParameterVisitedCount { get; private set; }
+            public bool ParameterVisited { get => ParameterVisitedCount > 0; }
             public bool FuncDeclVisited { get; private set; }
             public bool CompoundVisited { get; private set; }
 
@@ -93,7 +104,7 @@ namespace Rewired.Interpreter.Tests {
             }
 
             public object Visit(Parameter param) {
-                ParameterVisited = true;
+                ParameterVisitedCount++;
                 param.Type.VisitNode(this);
                 return null;
             }

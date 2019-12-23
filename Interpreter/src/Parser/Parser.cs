@@ -116,13 +116,9 @@ namespace Rewired.Interpreter {
         /// TYPE -> "int" | "float"
         /// </summary>
         private AbstractSyntaxTreeNode Type() {
-            if (tokenizer.Token.Type == TokenType.IntegerType) {
-                tokenizer = Eat(tokenizer, TokenType.IntegerType);
-                return new Type(tokenizer.Token);
-            } else {
-                tokenizer = Eat(tokenizer, TokenType.FloatType);
-                return new Type(tokenizer.Token);
-            }
+            Token token = tokenizer.Token;
+            tokenizer = Eat(tokenizer, tokenizer.Token.Type);
+            return new Type(token);
         }
 
         /// <summary>

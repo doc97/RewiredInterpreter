@@ -92,6 +92,8 @@ namespace Rewired.Interpreter {
                     token = new Token(TokenType.RightCurlyBracket, "}");
                 } else if (currentChar == ';') {
                     token = new Token(TokenType.SemiColon, ";");
+                } else if (currentChar == ',') {
+                    token = new Token(TokenType.Comma, ",");
                 } else if (NextString(text, 2) == ":=") {
                     token = new Token(TokenType.Assign, ":=");
                 }
