@@ -24,5 +24,24 @@ namespace Rewired.Interpreter.Tests {
             Symbol s = analyzer.LookupSymbol("a");
             return s.TypeName;
         }
+
+        [Test]
+        public void FunctionSymbolIsInScope() {
+            string text = "func A() {}";
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
+            analyzer.Analyze();
+            Symbol s = analyzer.LookupSymbol("A");
+            Assert.IsInstanceOf(typeof(FunctionSymbol), s);
+       }
+
+        [Test]
+        public void SymbolsInFunctionAddedToInnerScope() {
+            string text = "globA := 0; func A() { a := 1; globA := a; }";
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
+            analyzer.Analyze();
+            Assert.IsNull(analyzer.LookupSymbol("a"));
+        }
     }
 }

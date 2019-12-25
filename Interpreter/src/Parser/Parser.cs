@@ -143,7 +143,8 @@ namespace Rewired.Interpreter {
             nodes.Add(Statement());
 
             while (tokenizer.Token.Type != TokenType.Eof
-                && tokenizer.Token.Type != TokenType.RightCurlyBracket) {
+                && tokenizer.Token.Type != TokenType.RightCurlyBracket
+                && tokenizer.Token.Type != TokenType.Func) {
                 nodes.Add(Statement());
             }
 

@@ -114,6 +114,7 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(FuncDecl func) {
+            currentScope.Insert(new FunctionSymbol(func.Name));
             return null;
         }
 
