@@ -40,15 +40,6 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Looks up a symbol in the current scope.
-        /// </summary>
-        /// <param name="name">The name of the symbol</param>
-        /// <returns>The symbol if it is found, otherwise null</returns>
-        public Symbol LookupSymbol(string name) {
-            return currentScope.Lookup(name);
-        }
-
-        /// <summary>
         /// Prints out the current scope.
         /// </summary>
         public void PrintScopeInfo() {
@@ -114,7 +105,25 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(FuncDecl func) {
-            currentScope.Insert(new FunctionSymbol(func.Name));
+            VarSymbol[] paramSymbols = new VarSymbol[func.Parameters.Length];
+            for (int i = 0; i < paramSymbols.Length; i++) {
+                Parameter p = (Parameter) func.Parameters[i];
+                string name = ((Var) p.Name).Value;
+                string type = ((Type) p.Type).Value;
+                Symbol typeSymbol = currentScope.Lookup(type);
+                paramSymbols[i] = new VarSymbol(name, typeSymbol);
+            }
+
+            currentScope.Insert(new FunctionSymbol(func.Name, paramSymbols));
+            currentScope = new ScopedSymbolTable("", 1, currentScope);
+
+            foreach (VarSymbol param in paramSymbols) {
+                currentScope.Insert(param);
+            }
+
+            func.Block.VisitNode(this);
+            currentScope = currentScope.Parent;
+
             return null;
         }
 

@@ -4,6 +4,8 @@ namespace Rewired.Interpreter {
 
         public Token Token { get; }
 
+        public string Value { get => Token.Value; }
+
         public Type(Token token) {
             Token = token;
         }

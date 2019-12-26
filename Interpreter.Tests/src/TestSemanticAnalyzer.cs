@@ -9,39 +9,24 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("a := a;")]
         [TestCase("a := b;")]
         [TestCase("a := 1; b := a + c;")]
-        public void TestUndeclaredVariableThrowsException(string text) {
+        public void UndeclaredVariableThrowsException(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
             Assert.Throws<Exception>(() => analyzer.Analyze());
         }
 
-        [TestCase("a := 1;", ExpectedResult = "INTEGER")]
-        [TestCase("b := 1; a := b;", ExpectedResult = "INTEGER")]
-        public string TestSymbolType(string text) {
+        [TestCase("globA := 1; globB := globA;", "Global variable is not accessible in global scope")]
+        [TestCase("globA := 0; func A() { a := 1; globA := a; }", "Global variable is not accessible in function scope")]
+        [TestCase("globA := 0; func A(int a) { globA := a; }", "Function parameter is not accessible in function scope")]
+        public void ThrowsNoException(string text, string errMsg = "") {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
-            analyzer.Analyze();
-            Symbol s = analyzer.LookupSymbol("a");
-            return s.TypeName;
-        }
-
-        [Test]
-        public void FunctionSymbolIsInScope() {
-            string text = "func A() {}";
-            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
-            SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
-            analyzer.Analyze();
-            Symbol s = analyzer.LookupSymbol("A");
-            Assert.IsInstanceOf(typeof(FunctionSymbol), s);
-       }
-
-        [Test]
-        public void SymbolsInFunctionAddedToInnerScope() {
-            string text = "globA := 0; func A() { a := 1; globA := a; }";
-            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
-            SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
-            analyzer.Analyze();
-            Assert.IsNull(analyzer.LookupSymbol("a"));
+            try {
+                analyzer.Analyze();
+            } catch (Exception e) {
+                Assert.Fail(errMsg + "\n" + e.Message);
+            }
         }
     }
+
 }
