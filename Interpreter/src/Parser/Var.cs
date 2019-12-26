@@ -14,7 +14,7 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Gets the token value.
         /// </summary>
-        /// <value>The name of the varible.</value>
+        /// <value>The name of the variable.</value>
         public string Value { get => Token.Value; }
 
         /// <summary>
