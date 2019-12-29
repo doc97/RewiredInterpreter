@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 
 namespace Rewired.Interpreter.Tests {
@@ -52,6 +53,19 @@ namespace Rewired.Interpreter.Tests {
             root.VisitNode(visitor);
             Assert.IsTrue(visitor.TypeVisited);
             Assert.AreEqual(visitor.ParameterVisitedCount, 2);
+        }
+
+        [TestCase("a( := 1;")]
+        public void Parse_InvalidTokenThrowsException(string text) {
+            Parser parser = new Parser(new Tokenizer(text));
+            try {
+                parser.Parse();
+                Assert.Fail("Test case does not fail and did not throw an exception");
+            } catch (ParserError e) {
+                Assert.AreEqual(ParserError.ErrorCode.UnexpectedToken, e.Code);
+            } catch (Exception ex) {
+                Assert.Fail("Unrecognized exception thrown: " + ex.Message);
+            }
         }
 
         private class TestASTNodeVisitor : IAbstractSyntaxTreeNodeVisitor {

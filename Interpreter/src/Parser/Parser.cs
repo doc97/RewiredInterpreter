@@ -32,16 +32,10 @@ namespace Rewired.Interpreter {
         /// Parse constructs an Abstract Syntax Tree (AST) with the Program as the root node.
         /// </summary>
         /// <returns>The constructed AST</returns>
-        /// <exception>Throws a <c>System.Exception</c> if there are syntax errors.</exception>
+        /// <exception>Throws a <c>ParserError</c> if there are any errors.</exception>
         public AbstractSyntaxTreeNode Parse() {
             tokenizer = origTokenizer.Next();
-
-            AbstractSyntaxTreeNode node = Program();
-            if (tokenizer.Token.Type != TokenType.Eof) {
-                throw new Exception("Invalid syntax");
-            }
-
-            return node;
+            return Program();
         }
 
         /// <summary>
@@ -283,7 +277,10 @@ namespace Rewired.Interpreter {
             if (type == tokenizer.Token.Type) {
                 return tokenizer.Next();
             } else {
-                throw new Exception("Invalid syntax");
+                throw new ParserError(
+                    ParserError.ErrorCode.UnexpectedToken,
+                    string.Format("Error: Unexpected token '{0}'", tokenizer.Token.Value)
+                );
             }
         }
     }
