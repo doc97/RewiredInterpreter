@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 
 namespace Rewired.Interpreter.Tests {
@@ -70,15 +71,27 @@ namespace Rewired.Interpreter.Tests {
             return tokenizer.Token.Value;
         }
 
-        [TestCase("#")]
-        [TestCase("a! := 1;")]
-        public void Next_UnrecognizedCharacter(string text) {
+        [TestCase("#", 1, 1, '#')]
+        [TestCase("a! := 1;", 1, 2, '!')]
+        [TestCase("a := #4;", 1, 6, '#')]
+        [TestCase("a := 1;\nb := 1%;", 2, 7, '%')]
+        public void Next_UnrecognizedCharacter(string text, int errLine, int errCol, char errLexeme) {
             Tokenizer tokenizer = new Tokenizer(text);
-            Assert.Throws<TokenizerError>(() => {
-                do {
+            do {
+                try {
                     tokenizer = tokenizer.Next();
-                } while (tokenizer.Token.Type != TokenType.Eof);
-            });
+                } catch (TokenizerError err) {
+                    Assert.AreEqual(errLine, err.Line, "Wrong line number");
+                    Assert.AreEqual(errCol, err.Column, "Wrong column number");
+                    Assert.AreEqual(errLexeme, err.Lexeme, "Wrong lexeme");
+                    break; // prevent infinite loop
+                } catch (Exception ex) {
+                    Assert.Fail(string.Format(
+                        "Unrecognized exception thrown: ({0}): {1}",
+                        ex.GetType(), ex.Message)
+                    );
+                }
+            } while (tokenizer.Token.Type != TokenType.Eof);
         }
     }
 }

@@ -25,22 +25,30 @@ namespace Rewired.Interpreter {
         /// <value></value>
         public Token Token { get; }
 
+        public int Line { get; private set; }
+
+        public int Column { get; private set; }
+
         /// <summary>
         /// Instantiates a new instance out of the source text.
         /// 
         /// The current token is of the type Eof.
         /// </summary>
         /// <param name="text">The text to convert</param>
-        public Tokenizer(string text) : this(text, new Token(TokenType.Eof, "")) { }
+        public Tokenizer(string text) : this(text, new Token(TokenType.Eof, ""), 1, 1) { }
 
         /// <summary>
         /// Instantiates a new instance out of the source text and token.
         /// </summary>
         /// <param name="text">The text to convert</param>
         /// <param name="token">The current converted token</param>
-        private Tokenizer(string text, Token token) {
+        /// <param name="line">The current line number</param>
+        /// <param name="column">The current column number</param>
+        private Tokenizer(string text, Token token, int line, int column) {
             Text = text;
             Token = token;
+            Line = line;
+            Column = column;
             reservedKeywords = new Dictionary<string, Token>() {
                 { "func", new Token(TokenType.Func, "func") },
                 { "int", new Token(TokenType.IntegerType, "int") },
@@ -67,7 +75,7 @@ namespace Rewired.Interpreter {
                 Token token = new Token(TokenType.Eof, null);
 
                 if (char.IsWhiteSpace(currentChar)) {
-                    text = text.TrimStart();
+                    text = SkipWhitespace(text);
                     currentChar = NextChar(text);
                     continue;
                 } else if (char.IsLetter(currentChar)) {
@@ -99,13 +107,13 @@ namespace Rewired.Interpreter {
                 }
 
                 if (token.Type == TokenType.Eof) {
-                    throw new TokenizerError("Invalid syntax");
+                    throw new TokenizerError(currentChar, Line, Column, "Invalid syntax");
                 }
 
-                return new Tokenizer(text.Substring(token.Value.Length), token);
+                return new Tokenizer(text.Substring(token.Value.Length), token, Line, Column + token.Value.Length);
             }
 
-            return new Tokenizer("", new Token(TokenType.Eof, ""));
+            return new Tokenizer("", new Token(TokenType.Eof, ""), Line, Column);
         }
 
         /// <summary>
@@ -139,7 +147,17 @@ namespace Rewired.Interpreter {
         /// <param name="text">The text to trim (not changed)</param>
         /// <returns>A new string with the whitespace removed.</returns>
         private string SkipWhitespace(string text) {
-            return text.TrimStart();
+            for (int i = 0; i < text.Length; i++) {
+                if (text[i] == '\n') {
+                    Line++;
+                    Column = 1;
+                } else if (char.IsWhiteSpace(text[i])) {
+                    Column++;
+                } else {
+                    return text.Substring(i);
+                }
+            }
+            return "";
         }
 
         /// <summary>
