@@ -6,11 +6,11 @@ namespace Rewired.Interpreter.Tests {
     [TestFixture]
     public class TestSemanticAnalyzer {
 
-        [TestCase("a := a;")]
-        [TestCase("a := b;")]
-        [TestCase("a := 1; b := a + c;")]
-        [TestCase("func A() {} a := A;")]
-        public void UndeclaredVariableThrowsError(string text) {
+        [TestCase("a := a;", 1, 6)]
+        [TestCase("a := b;", 1, 6)]
+        [TestCase("a := 1;\nb := a + c;", 2, 10)]
+        [TestCase("func A() {} a := A;", 1, 18)]
+        public void UndeclaredVariableThrowsError(string text, int errLine, int errCol) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
             try {
@@ -18,6 +18,8 @@ namespace Rewired.Interpreter.Tests {
                 Assert.Fail("Test case does not fail and did not throw an exception");
             } catch (SemanticError err) {
                 Assert.AreEqual(SemanticError.ErrorCode.IdNotFound, err.Code);
+                Assert.AreEqual(errLine, err.Token.Line);
+                Assert.AreEqual(errCol, err.Token.Column);
             } catch (Exception ex) {
                 Assert.Fail(string.Format(
                     "Unrecognized exception thrown: ({0}): {1}",

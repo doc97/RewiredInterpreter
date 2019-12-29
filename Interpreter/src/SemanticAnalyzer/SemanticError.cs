@@ -15,8 +15,14 @@ namespace Rewired.Interpreter {
         /// </summary>
         public ErrorCode Code { get; }
 
-        public SemanticError(ErrorCode code, string message = "") : base(message) {
+        /// <summary>
+        /// Gets the token at which the error occurred.
+        /// </summary>
+        public Token Token { get; }
+
+        public SemanticError(ErrorCode code, Token token, string message = "") : base(message) {
             Code = code;
+            Token = token;
         }
     }
 

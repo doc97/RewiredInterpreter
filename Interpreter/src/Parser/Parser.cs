@@ -64,7 +64,7 @@ namespace Rewired.Interpreter {
         /// </summary>
         private AbstractSyntaxTreeNode Declaration() {
             tokenizer = Eat(tokenizer, TokenType.Func);
-            string funcName = tokenizer.Token.Value;
+            Token funcName = tokenizer.Token;
             tokenizer = Eat(tokenizer, TokenType.Id);
             tokenizer = Eat(tokenizer, TokenType.LeftParenthesis);
             AbstractSyntaxTreeNode[] parameters = Parameters();

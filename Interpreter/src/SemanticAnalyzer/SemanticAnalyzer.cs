@@ -62,6 +62,7 @@ namespace Rewired.Interpreter {
             if (leftSymbol != rightSymbol) {
                 throw new SemanticError(
                     SemanticError.ErrorCode.TypeMismatch,
+                    op.Op,
                     string.Format("Type mismatch: Cannot perform '{0} {1} {2}",
                         leftSymbol.TypeName, op.Op.Value, rightSymbol.TypeName)
                 );
@@ -89,6 +90,7 @@ namespace Rewired.Interpreter {
             if (varSymbol == null) {
                 throw new SemanticError(
                     SemanticError.ErrorCode.IdNotFound,
+                    var.Token,
                     string.Format("Error: Variable '{0}' not found", varName)
                 );
             }
@@ -115,6 +117,7 @@ namespace Rewired.Interpreter {
             if (currentScope.HasSymbol(func.Name)) {
                 throw new SemanticError(
                     SemanticError.ErrorCode.DuplicateId,
+                    func.Token,
                     string.Format("Error: Identifier {0} already exists in the scope", func.Name)
                 );
             }
