@@ -16,10 +16,13 @@ namespace Rewired.Interpreter.Tests {
             try {
                 analyzer.Analyze();
                 Assert.Fail("Test case does not fail and did not throw an exception");
-            } catch (SemanticError e) {
-                Assert.AreEqual(SemanticError.ErrorCode.IdNotFound, e.Code);
-            } catch (Exception) {
-                Assert.Fail("Unrecognized exception thrown");
+            } catch (SemanticError err) {
+                Assert.AreEqual(SemanticError.ErrorCode.IdNotFound, err.Code);
+            } catch (Exception ex) {
+                Assert.Fail(string.Format(
+                    "Unrecognized exception thrown: ({0}): {1}",
+                    ex.GetType(), ex.Message)
+                );
             }
         }
 
@@ -30,10 +33,13 @@ namespace Rewired.Interpreter.Tests {
             try {
                 analyzer.Analyze();
                 Assert.Fail("Test case does not fail and did not throw an exception");
-            } catch (SemanticError e) {
-                Assert.AreEqual(SemanticError.ErrorCode.DuplicateId, e.Code);
-            } catch (Exception) {
-                Assert.Fail("Unrecognized exception thrown");
+            } catch (SemanticError err) {
+                Assert.AreEqual(SemanticError.ErrorCode.DuplicateId, err.Code);
+            } catch (Exception ex) {
+                Assert.Fail(string.Format(
+                    "Unrecognized exception thrown: ({0}): {1}",
+                    ex.GetType(), ex.Message)
+                );
             }
         }
 

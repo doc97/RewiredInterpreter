@@ -61,10 +61,13 @@ namespace Rewired.Interpreter.Tests {
             try {
                 parser.Parse();
                 Assert.Fail("Test case does not fail and did not throw an exception");
-            } catch (ParserError e) {
-                Assert.AreEqual(ParserError.ErrorCode.UnexpectedToken, e.Code);
+            } catch (ParserError err) {
+                Assert.AreEqual(ParserError.ErrorCode.UnexpectedToken, err.Code);
             } catch (Exception ex) {
-                Assert.Fail("Unrecognized exception thrown: " + ex.Message);
+                Assert.Fail(string.Format(
+                    "Unrecognized exception thrown: ({0}): {1}",
+                    ex.GetType(), ex.Message)
+                );
             }
         }
 
