@@ -8,20 +8,20 @@ namespace Rewired.Interpreter.Tests {
         [Test]
         public void Parse_EmptyStatement() {
             Parser parser = new Parser(new Tokenizer(""));
-            Assert.True(parser.Parse() is Program);
+            Assert.IsTrue(parser.Parse() is Program);
         }
 
         [Test]
         public void Parse_HasNoState() {
             Parser parser = new Parser(new Tokenizer("a := 1;"));
-            Assert.True(parser.Parse() is Program);
-            Assert.True(parser.Parse() is Program);
+            Assert.IsTrue(parser.Parse() is Program);
+            Assert.IsTrue(parser.Parse() is Program);
         }
 
         [Test]
         public void Parse_MultipleStatements() {
             Parser parser = new Parser(new Tokenizer("a := 1; b := 2;"));
-            Assert.True(parser.Parse() is Program);
+            Assert.IsTrue(parser.Parse() is Program);
         }
 
         [TestCase("func A() { }", ExpectedResult = true)]
@@ -40,8 +40,8 @@ namespace Rewired.Interpreter.Tests {
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
             root.VisitNode(visitor);
-            Assert.True(visitor.TypeVisited);
-            Assert.True(visitor.ParameterVisited);
+            Assert.IsTrue(visitor.TypeVisited);
+            Assert.IsTrue(visitor.ParameterVisited);
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Rewired.Interpreter.Tests {
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
             root.VisitNode(visitor);
-            Assert.True(visitor.TypeVisited);
+            Assert.IsTrue(visitor.TypeVisited);
             Assert.AreEqual(visitor.ParameterVisitedCount, 2);
         }
 
