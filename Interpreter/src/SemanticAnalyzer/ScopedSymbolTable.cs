@@ -54,7 +54,7 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Adds a non-type symbol to the table.
+        /// Adds a non-variable symbol to the table.
         /// </summary>
         /// <param name="symbol">The symbol to add</param>
         public void InsertSymbol(Symbol symbol) {
@@ -62,7 +62,7 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Adds a type symbol to the table.
+        /// Adds a variable symbol to the table.
         /// </summary>
         /// <param name="symbol">The symbol to add</param>
         public void InsertVariable(Symbol variable) {
@@ -70,16 +70,13 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Searches for a non-type symbol by name in the current scope and if not found,
+        /// Searches for a non-variable symbol by name in the current scope and if not found,
         /// it searches for it in the parent scope.
         /// </summary>
         /// <param name="name">The name to search for</param>
         /// <returns>The stored symbol or null if the name cannot be found.</returns>
         public Symbol LookupSymbol(string name) {
-            if (symbols.ContainsKey(name)) {
-                return symbols[name];
-            }
-            return Parent?.LookupSymbol(name);
+            return HasSymbol(name) ? symbols[name] : Parent?.LookupSymbol(name);
         }
 
         /// <summary>
@@ -88,17 +85,35 @@ namespace Rewired.Interpreter {
         /// <param name="name">The name to search for</param>
         /// <returns>The stored symbol or null if the name cannot be found.</returns>
         public Symbol LookupVariable(string name) {
-            return variables.ContainsKey(name) ? variables[name] : null;
+            return HasVariable(name) ? variables[name] : null;
+        }
+
+        /// <summary>
+        /// Checks whether a non-variable symbol with the name exists.
+        /// </summary>
+        /// <param name="name">The name to check for</param>
+        /// <returns>True if found, false otherwise</returns>
+        public bool HasSymbol(string name) {
+            return symbols.ContainsKey(name);
+        }
+
+        /// <summary>
+        /// Checks whether a variable symbol with the name exists.
+        /// </summary>
+        /// <param name="name">The name to check for</param>
+        /// <returns>True if found, false otherwise</returns>
+        public bool HasVariable(string name) {
+            return variables.ContainsKey(name);
         }
 
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("{0, -12} | {1}\n", "Name", "Symbol");
-            sb.Append("----------------------= TYPES =--------------------------------\n");
+            sb.Append("--------------------= VARIABLES =------------------------------\n");
             foreach (KeyValuePair<string, Symbol> pair in variables) {
                 sb.AppendFormat("{0, -12} | {1}\n", pair.Key, pair.Value, "\n");
             }
-            sb.Append("--------------------= VARIABLES =------------------------------\n");
+            sb.Append("----------------------= OTHER =--------------------------------\n");
             foreach (KeyValuePair<string, Symbol> pair in symbols) {
                 sb.AppendFormat("{0, -12} | {1}\n", pair.Key, pair.Value, "\n");
             }

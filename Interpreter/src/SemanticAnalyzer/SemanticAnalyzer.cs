@@ -32,7 +32,7 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Walks the AST.
         /// </summary>
-        /// <exception cref="System.Exception">
+        /// <exception cref="SemanticError">
         /// Thrown when there is a semantic error.
         /// </exception>
         public void Analyze() {
@@ -60,8 +60,11 @@ namespace Rewired.Interpreter {
             Symbol leftSymbol = (Symbol) op.Left.VisitNode(this);
             Symbol rightSymbol = (Symbol) op.Right.VisitNode(this);
             if (leftSymbol != rightSymbol) {
-                throw new Exception(string.Format("Type mismatch: Cannot perform '{0} {1} {2}",
-                    leftSymbol.TypeName, op.Op.Value, rightSymbol.TypeName));
+                throw new SemanticError(
+                    SemanticError.ErrorCode.TypeMismatch,
+                    string.Format("Type mismatch: Cannot perform '{0} {1} {2}",
+                        leftSymbol.TypeName, op.Op.Value, rightSymbol.TypeName)
+                );
             }
             return leftSymbol.Type;
         }
@@ -84,7 +87,10 @@ namespace Rewired.Interpreter {
             string varName = var.Value;
             Symbol varSymbol = currentScope.LookupVariable(varName);
             if (varSymbol == null) {
-                throw new Exception(string.Format("Error: Variable '{0}' not found", varName));
+                throw new SemanticError(
+                    SemanticError.ErrorCode.IdNotFound,
+                    string.Format("Error: Variable '{0}' not found", varName)
+                );
             }
             return varSymbol.Type;
         }
@@ -106,6 +112,13 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(FuncDecl func) {
+            if (currentScope.HasSymbol(func.Name)) {
+                throw new SemanticError(
+                    SemanticError.ErrorCode.DuplicateId,
+                    string.Format("Error: Identifier {0} already exists in the scope", func.Name)
+                );
+            }
+
             VarSymbol[] paramSymbols = new VarSymbol[func.Parameters.Length];
             for (int i = 0; i < paramSymbols.Length; i++) {
                 Parameter p = (Parameter) func.Parameters[i];

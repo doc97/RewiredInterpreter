@@ -10,10 +10,31 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("a := b;")]
         [TestCase("a := 1; b := a + c;")]
         [TestCase("func A() {} a := A;")]
-        public void UndeclaredVariableThrowsException(string text) {
+        public void UndeclaredVariableThrowsError(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
-            Assert.Throws<Exception>(() => analyzer.Analyze());
+            try {
+                analyzer.Analyze();
+                Assert.Fail("Test case does not fail and did not throw an exception");
+            } catch (SemanticError e) {
+                Assert.AreEqual(SemanticError.ErrorCode.IdNotFound, e.Code);
+            } catch (Exception) {
+                Assert.Fail("Unrecognized exception thrown");
+            }
+        }
+
+        [TestCase("func A() {} func A() {}")]
+        public void DuplicateDeclarationThrowsError(string text) {
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
+            try {
+                analyzer.Analyze();
+                Assert.Fail("Test case does not fail and did not throw an exception");
+            } catch (SemanticError e) {
+                Assert.AreEqual(SemanticError.ErrorCode.DuplicateId, e.Code);
+            } catch (Exception) {
+                Assert.Fail("Unrecognized exception thrown");
+            }
         }
 
         [TestCase("globA := 1; globB := globA;", "Global variable is not accessible in global scope")]
