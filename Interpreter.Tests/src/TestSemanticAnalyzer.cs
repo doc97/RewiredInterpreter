@@ -9,6 +9,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("a := a;")]
         [TestCase("a := b;")]
         [TestCase("a := 1; b := a + c;")]
+        [TestCase("func A() {} a := A;")]
         public void UndeclaredVariableThrowsException(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);

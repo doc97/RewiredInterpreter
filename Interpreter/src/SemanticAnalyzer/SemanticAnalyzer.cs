@@ -67,23 +67,24 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Int num) {
-            return currentScope.Lookup("INTEGER");
+            return currentScope.LookupSymbol("INTEGER");
         }
 
         public object Visit(Assign assign) {
             Symbol rightType = (Symbol) assign.Right.VisitNode(this);
 
             string varName = ((Var) assign.Left).Value;
-            Symbol varType = currentScope.Lookup(varName) ?? rightType;
-            currentScope.Insert(new VarSymbol(varName, varType));
+            // If the variable does not exist, infer type from the right-hand side
+            Symbol varType = currentScope.LookupVariable(varName)?.Type ?? rightType;
+            currentScope.InsertVariable(new VarSymbol(varName, varType));
             return null;
         }
 
         public object Visit(Var var) {
             string varName = var.Value;
-            Symbol varSymbol = currentScope.Lookup(varName);
+            Symbol varSymbol = currentScope.LookupVariable(varName);
             if (varSymbol == null) {
-                throw new Exception(string.Format("Error: Identifier '{0}' not found", varName));
+                throw new Exception(string.Format("Error: Variable '{0}' not found", varName));
             }
             return varSymbol.Type;
         }
@@ -110,15 +111,15 @@ namespace Rewired.Interpreter {
                 Parameter p = (Parameter) func.Parameters[i];
                 string name = ((Var) p.Name).Value;
                 string type = ((Type) p.Type).Value;
-                Symbol typeSymbol = currentScope.Lookup(type);
+                Symbol typeSymbol = currentScope.LookupSymbol(type);
                 paramSymbols[i] = new VarSymbol(name, typeSymbol);
             }
 
-            currentScope.Insert(new FunctionSymbol(func.Name, paramSymbols));
+            currentScope.InsertSymbol(new FunctionSymbol(func.Name, paramSymbols));
             currentScope = new ScopedSymbolTable("", 1, currentScope);
 
             foreach (VarSymbol param in paramSymbols) {
-                currentScope.Insert(param);
+                currentScope.InsertVariable(param);
             }
 
             func.Block.VisitNode(this);

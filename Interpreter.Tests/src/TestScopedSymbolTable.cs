@@ -9,8 +9,8 @@ namespace Rewired.Interpreter.Tests {
         public void Test_InitBuiltInTypes() {
             ScopedSymbolTable scope = new ScopedSymbolTable("", 1, null);
             scope.InitBuiltInTypes();
-            Assert.NotNull(scope.Lookup("INTEGER"));
-            Assert.NotNull(scope.Lookup("REAL"));
+            Assert.NotNull(scope.LookupSymbol("INTEGER"));
+            Assert.NotNull(scope.LookupSymbol("REAL"));
         }
 
         [Test]
@@ -18,14 +18,23 @@ namespace Rewired.Interpreter.Tests {
             ScopedSymbolTable parent = new ScopedSymbolTable("", 1, null);
             ScopedSymbolTable child = new ScopedSymbolTable("", 2, parent);
 
-            parent.Insert(new Symbol("test", null));
-            Assert.NotNull(child.Lookup("test"));
+            parent.InsertSymbol(new Symbol("test", null));
+            Assert.NotNull(child.LookupSymbol("test"));
         }
 
         [Test]
         public void Lookup_ParentNull() {
             ScopedSymbolTable scope = new ScopedSymbolTable("", 2, null);
-            Assert.Null(scope.Lookup("test"));
+            Assert.Null(scope.LookupSymbol("test"));
+        }
+
+        [Test]
+        public void Lookup_VariableNotCheckedInParentScope() {
+            ScopedSymbolTable parent = new ScopedSymbolTable("", 1, null);
+            ScopedSymbolTable child = new ScopedSymbolTable("", 2, parent);
+
+            parent.InsertVariable(new Symbol("a", null));
+            Assert.Null(child.LookupVariable("a"));
         }
     }
 

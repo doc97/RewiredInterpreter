@@ -9,9 +9,14 @@ namespace Rewired.Interpreter {
     public class ScopedSymbolTable {
 
         /// <summary>
-        /// The container for the symbols.
+        /// The container for non-variable symbols.
         /// </summary>
         private Dictionary<string, Symbol> symbols;
+
+        /// <summary>
+        /// The container for variable symbols.
+        /// </summary>
+        private Dictionary<string, Symbol> variables;
 
         /// <summary>
         /// Gets the name of the symbol table.
@@ -37,42 +42,63 @@ namespace Rewired.Interpreter {
             Level = level;
             Parent = parent;
             symbols = new Dictionary<string, Symbol>();
+            variables = new Dictionary<string, Symbol>();
         }
 
         /// <summary>
         /// Adds built-in types to the symbol table.
         /// </summary>
         public void InitBuiltInTypes() {
-            Insert(new BuiltInTypeSymbol("INTEGER"));
-            Insert(new BuiltInTypeSymbol("REAL"));
+            InsertSymbol(new BuiltInTypeSymbol("INTEGER"));
+            InsertSymbol(new BuiltInTypeSymbol("REAL"));
         }
 
         /// <summary>
-        /// Adds a symbol to the table.
+        /// Adds a non-type symbol to the table.
         /// </summary>
-        /// <param name="symbol"></param>
-        public void Insert(Symbol symbol) {
+        /// <param name="symbol">The symbol to add</param>
+        public void InsertSymbol(Symbol symbol) {
             symbols[symbol.Name] = symbol;
         }
 
         /// <summary>
-        /// Searches for a symbol by name in the current scope and if not found,
+        /// Adds a type symbol to the table.
+        /// </summary>
+        /// <param name="symbol">The symbol to add</param>
+        public void InsertVariable(Symbol variable) {
+            variables[variable.Name] = variable;
+        }
+
+        /// <summary>
+        /// Searches for a non-type symbol by name in the current scope and if not found,
         /// it searches for it in the parent scope.
         /// </summary>
         /// <param name="name">The name to search for</param>
         /// <returns>The stored symbol or null if the name cannot be found.</returns>
-        public Symbol Lookup(string name) {
+        public Symbol LookupSymbol(string name) {
             if (symbols.ContainsKey(name)) {
                 return symbols[name];
             }
+            return Parent?.LookupSymbol(name);
+        }
 
-            return Parent?.Lookup(name);
+        /// <summary>
+        /// Searches for a variable symbol by name in the current scope (only).
+        /// </summary>
+        /// <param name="name">The name to search for</param>
+        /// <returns>The stored symbol or null if the name cannot be found.</returns>
+        public Symbol LookupVariable(string name) {
+            return variables.ContainsKey(name) ? variables[name] : null;
         }
 
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("{0, -12} | {1}\n", "Name", "Symbol");
-            sb.Append("---------------------------------------------------------------\n");
+            sb.Append("----------------------= TYPES =--------------------------------\n");
+            foreach (KeyValuePair<string, Symbol> pair in variables) {
+                sb.AppendFormat("{0, -12} | {1}\n", pair.Key, pair.Value, "\n");
+            }
+            sb.Append("--------------------= VARIABLES =------------------------------\n");
             foreach (KeyValuePair<string, Symbol> pair in symbols) {
                 sb.AppendFormat("{0, -12} | {1}\n", pair.Key, pair.Value, "\n");
             }
