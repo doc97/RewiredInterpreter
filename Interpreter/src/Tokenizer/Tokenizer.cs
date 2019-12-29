@@ -11,7 +11,7 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Contains the reserved keywords of the language.
         /// </summary>
-        private Dictionary<string, Token> reservedKeywords;
+        private Dictionary<string, ReservedKeyword> reservedKeywords;
 
         /// <summary>
         /// Gets the source text. 
@@ -35,7 +35,7 @@ namespace Rewired.Interpreter {
         /// The current token is of the type Eof.
         /// </summary>
         /// <param name="text">The text to convert</param>
-        public Tokenizer(string text) : this(text, new Token(TokenType.Eof, ""), 1, 1) { }
+        public Tokenizer(string text) : this(text, new Token(TokenType.Eof, "", 0, 0), 1, 1) { }
 
         /// <summary>
         /// Instantiates a new instance out of the source text and token.
@@ -49,10 +49,10 @@ namespace Rewired.Interpreter {
             Token = token;
             Line = line;
             Column = column;
-            reservedKeywords = new Dictionary<string, Token>() {
-                { "func", new Token(TokenType.Func, "func") },
-                { "int", new Token(TokenType.IntegerType, "int") },
-                { "float", new Token(TokenType.FloatType, "float") },
+            reservedKeywords = new Dictionary<string, ReservedKeyword>() {
+                { "func", new ReservedKeyword(TokenType.Func, "func") },
+                { "int", new ReservedKeyword(TokenType.IntegerType, "int") },
+                { "float", new ReservedKeyword(TokenType.FloatType, "float") },
             };
         }
 
@@ -72,7 +72,7 @@ namespace Rewired.Interpreter {
             char currentChar = NextChar(text);
 
             while (currentChar != '\0') {
-                Token token = new Token(TokenType.Eof, null);
+                Token token = new Token(TokenType.Eof, null, Line, Column);
 
                 if (char.IsWhiteSpace(currentChar)) {
                     text = SkipWhitespace(text);
@@ -81,29 +81,29 @@ namespace Rewired.Interpreter {
                 } else if (char.IsLetter(currentChar)) {
                     token = GetId(text);
                 } else if ("0123456789".Contains(currentChar)) {
-                    token = new Token(TokenType.IntegerConst, GetInteger(text));
+                    token = new Token(TokenType.IntegerConst, GetInteger(text), Line, Column);
                 } else if (currentChar == '+') {
-                    token = new Token(TokenType.Plus, "+");
+                    token = new Token(TokenType.Plus, "+", Line, Column);
                 } else if (currentChar == '-') {
-                    token = new Token(TokenType.Minus, "-");
+                    token = new Token(TokenType.Minus, "-", Line, Column);
                 } else if (currentChar == '*') {
-                    token = new Token(TokenType.Asterisk, "*");
+                    token = new Token(TokenType.Asterisk, "*", Line, Column);
                 } else if (currentChar == '/') {
-                    token = new Token(TokenType.Slash, "/");
+                    token = new Token(TokenType.Slash, "/", Line, Column);
                 } else if (currentChar == '(') {
-                    token = new Token(TokenType.LeftParenthesis, "(");
+                    token = new Token(TokenType.LeftParenthesis, "(", Line, Column);
                 } else if (currentChar == ')') {
-                    token = new Token(TokenType.RightParenthesis, ")");
+                    token = new Token(TokenType.RightParenthesis, ")", Line, Column);
                 } else if (currentChar == '{') {
-                    token = new Token(TokenType.LeftCurlyBracket, "{");
+                    token = new Token(TokenType.LeftCurlyBracket, "{", Line, Column);
                 } else if (currentChar == '}') {
-                    token = new Token(TokenType.RightCurlyBracket, "}");
+                    token = new Token(TokenType.RightCurlyBracket, "}", Line, Column);
                 } else if (currentChar == ';') {
-                    token = new Token(TokenType.SemiColon, ";");
+                    token = new Token(TokenType.SemiColon, ";", Line, Column);
                 } else if (currentChar == ',') {
-                    token = new Token(TokenType.Comma, ",");
+                    token = new Token(TokenType.Comma, ",", Line, Column);
                 } else if (NextString(text, 2) == ":=") {
-                    token = new Token(TokenType.Assign, ":=");
+                    token = new Token(TokenType.Assign, ":=", Line, Column);
                 }
 
                 if (token.Type == TokenType.Eof) {
@@ -113,7 +113,7 @@ namespace Rewired.Interpreter {
                 return new Tokenizer(text.Substring(token.Value.Length), token, Line, Column + token.Value.Length);
             }
 
-            return new Tokenizer("", new Token(TokenType.Eof, ""), Line, Column);
+            return new Tokenizer("", new Token(TokenType.Eof, "", Line, Column), Line, Column);
         }
 
         /// <summary>
@@ -178,11 +178,12 @@ namespace Rewired.Interpreter {
         private Token GetId(string text) {
             string word = GetMultiCharValue(text, c => char.IsLetter(c));
             if (reservedKeywords.ContainsKey(word)) {
-                return reservedKeywords[word];
+                ReservedKeyword keyword = reservedKeywords[word];
+                return new Token(keyword.type, keyword.name, Line, Column);
             }
 
             string id = GetMultiCharValue(text, c => char.IsLetterOrDigit(c));
-            return new Token(TokenType.Id, id);
+            return new Token(TokenType.Id, id, Line, Column);
         }
 
         /// <summary>

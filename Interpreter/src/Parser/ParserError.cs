@@ -13,8 +13,14 @@ namespace Rewired.Interpreter {
         /// </summary>
         public ErrorCode Code { get; }
 
-        public ParserError(ErrorCode code, string message = "") : base(message) {
+        /// <summary>
+        /// Gets the erronous token.
+        /// </summary>
+        public Token Token { get; }
+
+        public ParserError(ErrorCode code, Token token, string message = "") : base(message) {
             Code = code;
+            Token = token;
         }
     }
 }

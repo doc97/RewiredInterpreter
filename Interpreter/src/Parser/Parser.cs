@@ -279,6 +279,7 @@ namespace Rewired.Interpreter {
             } else {
                 throw new ParserError(
                     ParserError.ErrorCode.UnexpectedToken,
+                    tokenizer.Token,
                     string.Format("Error: Unexpected token '{0}'", tokenizer.Token.Value)
                 );
             }
