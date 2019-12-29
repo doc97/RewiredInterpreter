@@ -56,7 +56,7 @@ namespace Rewired.Interpreter {
         /// Returns and empty tokenizer the text is empty.
         /// </returns>
         /// <exception>
-        /// Throws a <see href="System.Exception" /> if no token could be
+        /// Throws a <see href="TokenizerError" /> if no token could be
         /// recognized.
         /// </exception>
         public Tokenizer Next() {
@@ -99,7 +99,7 @@ namespace Rewired.Interpreter {
                 }
 
                 if (token.Type == TokenType.Eof) {
-                    throw new Exception("Invalid syntax");
+                    throw new TokenizerError("Invalid syntax");
                 }
 
                 return new Tokenizer(text.Substring(token.Value.Length), token);

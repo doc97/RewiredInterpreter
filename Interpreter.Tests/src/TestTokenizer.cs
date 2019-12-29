@@ -69,5 +69,16 @@ namespace Rewired.Interpreter.Tests {
             Tokenizer tokenizer = new Tokenizer(text).Next();
             return tokenizer.Token.Value;
         }
+
+        [TestCase("#")]
+        [TestCase("a! := 1;")]
+        public void Next_UnrecognizedCharacter(string text) {
+            Tokenizer tokenizer = new Tokenizer(text);
+            Assert.Throws<TokenizerError>(() => {
+                do {
+                    tokenizer = tokenizer.Next();
+                } while (tokenizer.Token.Type != TokenType.Eof);
+            });
+        }
     }
 }
