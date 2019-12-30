@@ -36,6 +36,10 @@ $ dotnet run                        # you can omit the --project flag, if
                                     # you're in the Interpreter directory
 ```
 
+## Links
+
+A link to the Trello board for the game: [Rewired Trello][4]
+
 ## How it works
 
 The project consists of 4 separate components; the tokenizer, the parser, 
@@ -85,4 +89,5 @@ FACTOR -> "+" FACTOR
 [1]: https://dotnet.microsoft.com/download
 [2]: https://github.com/OmniSharp/omnisharp-vscode
 [3]: https://github.com/formulahendry/vscode-dotnet-test-explorer
+[4]: https://trello.com/b/Tahc4TQL
 [gif]: Docs/rewired_unittest.gif "Unit test demo"
