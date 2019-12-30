@@ -23,10 +23,6 @@ public class Program {
 
                 Interpreter interpreter = new Interpreter(tree);
                 interpreter.Interpret();
-                if (DEBUG) {
-                    Console.WriteLine("--== Global Scope (post-execution) ==--");
-                    interpreter.PrintGlobalScope();
-                }
             } catch (Exception e) {
                 Console.WriteLine(e.Message);
                 if (DEBUG) {

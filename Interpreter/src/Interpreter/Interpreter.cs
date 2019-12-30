@@ -14,10 +14,7 @@ namespace Rewired.Interpreter {
         /// </summary>
         private AbstractSyntaxTreeNode tree;
 
-        /// <summary>
-        /// The dictionary works as the global memory of the program during runtime.
-        /// </summary>
-        private Dictionary<string, int> globalScope;
+        private CallStack stack;
 
         /// <summary>
         /// Instantiates a new instance with an empty global scope.
@@ -25,7 +22,7 @@ namespace Rewired.Interpreter {
         /// <param name="tree">The AST to interpret</param>
         public Interpreter(AbstractSyntaxTreeNode tree) {
             this.tree = tree;
-            globalScope = new Dictionary<string, int>();
+            stack = new CallStack();
         }
 
         /// <summary>
@@ -36,29 +33,21 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Prints the current state of the global scope.
-        ///
-        /// This is mostly for debugging purposes.
-        /// </summary>
-        public void PrintGlobalScope() {
-            Console.WriteLine("{");
-            foreach (KeyValuePair<string, int> pair in globalScope) {
-                Console.WriteLine("  " + pair.Key + ": " + pair.Value);
-            }
-            Console.WriteLine("}");
-        }
-
-        /// <summary>
         /// Looks up the value of a variable stored in the global scope.
         /// 
-        /// Should be called after `Interpret()` has been called. The function
-        /// will throw a `System.KeyNotFoundException` exception if a variable
-        /// with the name cannot be found.
+        /// Should be called after `Interpret()` has been called. 
         /// </summary>
         /// <param name="name">The name of the variable</param>
         /// <returns>The stored value</returns>
+        /// <exception href="KeyNotFoundException">
+        /// Throws if a variable with the name cannot be found.
+        /// </exception>
         public int GetGlobalVar(string name) {
-            return globalScope[name];
+            int value;
+            if (stack.Peek().TryGet(name, out value)) {
+                return value;
+            }
+            throw new KeyNotFoundException();
         }
 
         #region IAbstractSyntaxTreeNodeVisitor
@@ -100,13 +89,13 @@ namespace Rewired.Interpreter {
             // The left-hand side of an Assign statement is Var
             string varName = ((Var) assign.Left).Value;
             int varValue = (int) assign.Right.VisitNode(this);
-            globalScope[varName] = varValue;
+            stack.Peek().Set(varName, varValue);
             return null;
         }
 
         public object Visit(Var var) {
             // The semantic analyzer checks for unused variables
-            return globalScope[var.Value];
+            return stack.Peek().Get(var.Value);
         }
 
         public object Visit(Type type) {
@@ -129,7 +118,19 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Program program) {
-            return program.Block.VisitNode(this);
+            ActivationRecord record = new ActivationRecord(
+                ActivationRecord.Type.Program,
+                program.Name,
+                1
+            );
+
+            stack.Push(record);
+            object ret = program.Block.VisitNode(this);
+            /* The current stack frame is not popped with:
+             *   stack.Pop();
+             * because it is needed for testing.
+            */
+            return ret;
         }
         #endregion
     }

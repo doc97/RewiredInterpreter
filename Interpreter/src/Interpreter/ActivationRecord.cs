@@ -65,15 +65,31 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Gets a stored member by name.
+        /// Gets the value of a stored member by name.
         /// </summary>
-        /// <param name="name">The name of the member to retrieve</param>
+        /// <param name="name">The name of the member</param>
         /// <returns>The value of the member</returns>
         /// <exception href="KeyNotFoundException">
         /// Throws if no member with the name has been stored.
         /// </exception>
         public int Get(string name) {
             return members[name];
+        }
+
+        /// <summary>
+        /// Tries to get the value of a stored member by name.
+        /// </summary>
+        /// <param name="name">The name of the member</param>
+        /// <param name="member">The value of the member</param>
+        /// <param name="def">The value of the member parameter if this function returns false</param>
+        /// <returns>True if found, false otherwise</returns>
+        public bool TryGet(string name, out int member, int def = 0) {
+            if (members.ContainsKey(name)) {
+                member = members[name];
+                return true;
+            }
+            member = def;
+            return false;
         }
 
         public override string ToString() {
