@@ -29,7 +29,7 @@ namespace Rewired.Interpreter.Tests {
         }
 
         [TestCase("func A() {} func A() {}")]
-        public void DuplicateDeclarationThrowsError(string text) {
+        public void DuplicateFunctionDeclarationThrowsError(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
             try {

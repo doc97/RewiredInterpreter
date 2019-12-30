@@ -27,7 +27,7 @@ namespace Rewired.Interpreter.Tests {
 
         [TestCase("func A() { }", ExpectedResult = true)]
         [TestCase("a := 1;", ExpectedResult = false)]
-        public bool Parse_FunctionDecl(string text) {
+        public bool Parse_FunctionDeclaration(string text) {
             Parser parser = new Parser(new Tokenizer(text));
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
@@ -36,7 +36,7 @@ namespace Rewired.Interpreter.Tests {
         }
 
         [Test]
-        public void Parse_FunctionDecl_WithOneParam() {
+        public void Parse_FunctionDeclaration_WithOneParameter() {
             Parser parser = new Parser(new Tokenizer("func A(int a) {}"));
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
@@ -46,7 +46,7 @@ namespace Rewired.Interpreter.Tests {
         }
 
         [Test]
-        public void Parse_FunctionDecl_MultipleParams() {
+        public void Parse_FunctionDeclaration_MultipleParameters() {
             Parser parser = new Parser(new Tokenizer("func A(int a, int b) {}"));
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
