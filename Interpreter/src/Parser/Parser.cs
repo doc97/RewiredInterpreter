@@ -32,7 +32,9 @@ namespace Rewired.Interpreter {
         /// Parse constructs an Abstract Syntax Tree (AST) with the Program as the root node.
         /// </summary>
         /// <returns>The constructed AST</returns>
-        /// <exception>Throws a <c>ParserError</c> if there are any errors.</exception>
+        /// <exception href="ParserError">
+        /// Throws if there are any errors.
+        /// </exception>
         public AbstractSyntaxTreeNode Parse() {
             tokenizer = origTokenizer.Next();
             return Program();
