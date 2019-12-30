@@ -26,6 +26,11 @@ namespace Rewired.Interpreter {
         public bool ShouldPopStackAtEnd { get; set; } = true;
 
         /// <summary>
+        /// Whether logging is enabled / disabled.
+        /// </summary>
+        public bool IsLoggingEnabled { get; set; } = false;
+
+        /// <summary>
         /// Instantiates a new instance with an empty global scope.
         /// </summary>
         /// <param name="tree">The AST to interpret</param>
@@ -57,6 +62,13 @@ namespace Rewired.Interpreter {
                 return value;
             }
             throw new KeyNotFoundException();
+        }
+
+        public void PrintCallStack() {
+            if (IsLoggingEnabled) {
+                Console.WriteLine("--== Call Stack ==--");
+                Console.WriteLine(stack);
+            }
         }
 
         #region IAbstractSyntaxTreeNodeVisitor

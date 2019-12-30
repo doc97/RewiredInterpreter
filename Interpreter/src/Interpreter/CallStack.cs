@@ -1,3 +1,4 @@
+using System.Text;
 using System;
 using System.Collections.Generic;
 
@@ -63,6 +64,14 @@ namespace Rewired.Interpreter {
                 return record;
             }
             return null;
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder();
+            foreach (ActivationRecord ar in stack.ToArray()) {
+                sb.Append(ar.ToString()).Append("\n");
+            }
+            return sb.ToString();
         }
     }
 
