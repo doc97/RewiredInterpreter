@@ -71,6 +71,19 @@ namespace Rewired.Interpreter.Tests {
             return tokenizer.Token.Value;
         }
 
+        [TestCase("a := 2;", "a", 0, 1, 1)]
+        [TestCase("a := 1;", ":=", 1, 1, 3)]
+        [TestCase("a := a;", "a", 2, 1, 6)]
+        public void Next_TokenPositionUpdated(string text, string token, int tokenIdx, int line, int column) {
+            Tokenizer tokenizer = new Tokenizer(text).Next();
+            for (int i = 0; i < tokenIdx; i++) {
+                tokenizer = tokenizer.Next();
+            }
+            Assert.AreEqual(token, tokenizer.Token.Value);
+            Assert.AreEqual(line, tokenizer.Token.Line);
+            Assert.AreEqual(column, tokenizer.Token.Column);
+        }
+
         [TestCase("#", 1, 1, '#')]
         [TestCase("a! := 1;", 1, 2, '!')]
         [TestCase("a := #4;", 1, 6, '#')]
