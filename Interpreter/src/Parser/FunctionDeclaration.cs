@@ -26,8 +26,8 @@ namespace Rewired.Interpreter {
         public AbstractSyntaxTreeNode Block { get; }
 
         /// <summary>
-        /// Instantiates a new node instance with the specified function name
-        /// and code block.
+        /// Instantiates a new node instance with the specified function name,
+        /// parameters and code block.
         /// </summary>
         /// <param name="name">The token containing of the function</param>
         /// <param name="parameters">The var nodes containing the

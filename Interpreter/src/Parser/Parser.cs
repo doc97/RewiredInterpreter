@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Rewired.Interpreter {
@@ -62,7 +61,7 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Declaration implements the DECLARATION grammar rule.
         /// 
-        /// DECLARATION -> "func" ID "(" PARAMS ")" BLOCK
+        /// DECLARATION -> "func" ID "(" PARAMETERS ")" BLOCK
         /// </summary>
         private AbstractSyntaxTreeNode Declaration() {
             tokenizer = Eat(tokenizer, TokenType.Func);
@@ -77,7 +76,7 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Parameters implements the PARAMETERS grammar rule.
         /// 
-        /// PARAMETERS -> PARAMETER ("," PARAMETERS)* | EMPTY
+        /// PARAMETERS -> PARAMETER ("," PARAMETER)* | EMPTY
         /// </summary>
         private AbstractSyntaxTreeNode[] Parameters() {
             List<AbstractSyntaxTreeNode> parameters = new List<AbstractSyntaxTreeNode>();

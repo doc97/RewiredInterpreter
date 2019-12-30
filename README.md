@@ -65,9 +65,9 @@ Here is the grammar that the interpreter currently supports:
 
 ```
 PROGRAM -> (DECLARATION | STATEMENT_LIST)*
-DECLARATION -> "func" ID "(" PARAMS ")" BLOCK
-PARAMS -> PARAM ("," PARAM)* | EMPTY
-PARAM -> TYPE ID
+DECLARATION -> "func" ID "(" PARAMETERS ")" BLOCK
+PARAMETERS -> PARAMETER ("," PARAMETER)* | EMPTY
+PARAMETER -> TYPE ID
 TYPE -> "int" | "float"
 BLOCK -> "{" STATEMENT_LIST "}"
 STATEMENT_LIST -> STATEMENT+
