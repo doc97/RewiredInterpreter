@@ -18,6 +18,7 @@ namespace Rewired.Interpreter {
         object Visit(Parameter param);
         object Visit(Compound comp);
         object Visit(FunctionDeclaration func);
+        object Visit(FunctionCall call);
         object Visit(Program program);
     }
 

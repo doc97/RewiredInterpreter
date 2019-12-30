@@ -42,14 +42,14 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Program implements the PROGRAM grammar rule.
         /// 
-        /// PROGRAM -> (DECLARATION | STATEMENT_LIST)*
+        /// PROGRAM -> (FUNCTION_DECLARATION | STATEMENT_LIST)*
         /// </summary>
         /// <returns></returns>
         private AbstractSyntaxTreeNode Program() {
             List<AbstractSyntaxTreeNode> nodes = new List<AbstractSyntaxTreeNode>();
             while (tokenizer.Token.Type != TokenType.Eof) {
                 if (tokenizer.Token.Type == TokenType.Func) {
-                    nodes.Add(Declaration());
+                    nodes.Add(FunctionDeclaration());
                 } else {
                     nodes.Add(StatementList());
                 }
@@ -59,11 +59,44 @@ namespace Rewired.Interpreter {
         }
 
         /// <summary>
-        /// Declaration implements the DECLARATION grammar rule.
+        /// FunctionCall implements the FUNCTION_CALL grammar rule.
         /// 
-        /// DECLARATION -> "func" ID "(" PARAMETERS ")" BLOCK
+        /// FUNCTION_CALL -> ID "(" ARGUMENTS ")"
         /// </summary>
-        private AbstractSyntaxTreeNode Declaration() {
+        private AbstractSyntaxTreeNode FunctionCall() {
+            Token name = tokenizer.Token;
+            tokenizer = Eat(tokenizer, TokenType.Id);
+            tokenizer = Eat(tokenizer, TokenType.LeftParenthesis);
+            AbstractSyntaxTreeNode[] arguments = Arguments();
+
+            tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
+            return new FunctionCall(name, arguments);
+        }
+
+        /// <summary>
+        /// Arguments implements the ARGUMENTS grammar rule.
+        /// ARGUMENTS -> (EXPR ("," EXPR)*)?
+        /// </summary>
+        private AbstractSyntaxTreeNode[] Arguments() {
+            if (tokenizer.Token.Type == TokenType.RightParenthesis) {
+                return new AbstractSyntaxTreeNode[0];
+            }
+
+            List<AbstractSyntaxTreeNode> arguments = new List<AbstractSyntaxTreeNode>();
+            arguments.Add(Expression());
+            while (tokenizer.Token.Type == TokenType.Comma) {
+                tokenizer = Eat(tokenizer, TokenType.Comma);
+                arguments.Add(Expression());
+            }
+            return arguments.ToArray();
+        }
+
+        /// <summary>
+        /// FunctionDeclaration implements the FUNCTION_DECLARATION grammar rule.
+        /// 
+        /// FUNCTION_DECLARATION -> "func" ID "(" PARAMETERS ")" BLOCK
+        /// </summary>
+        private AbstractSyntaxTreeNode FunctionDeclaration() {
             tokenizer = Eat(tokenizer, TokenType.Func);
             Token funcName = tokenizer.Token;
             tokenizer = Eat(tokenizer, TokenType.Id);
@@ -79,13 +112,12 @@ namespace Rewired.Interpreter {
         /// PARAMETERS -> PARAMETER ("," PARAMETER)* | EMPTY
         /// </summary>
         private AbstractSyntaxTreeNode[] Parameters() {
-            List<AbstractSyntaxTreeNode> parameters = new List<AbstractSyntaxTreeNode>();
-            if (tokenizer.Token.Type == TokenType.IntegerType || tokenizer.Token.Type == TokenType.FloatType) {
-                parameters.Add(Parameter());
-            } else {
-                return parameters.ToArray();
+            if (tokenizer.Token.Type != TokenType.IntegerType && tokenizer.Token.Type != TokenType.FloatType) {
+                return new AbstractSyntaxTreeNode[0];
             }
 
+            List<AbstractSyntaxTreeNode> parameters = new List<AbstractSyntaxTreeNode>();
+            parameters.Add(Parameter());
             while (tokenizer.Token.Type == TokenType.Comma) {
                 tokenizer = Eat(tokenizer, TokenType.Comma);
                 parameters.Add(Parameter());
@@ -149,12 +181,16 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Statement implements the STATEMENT grammar rule.
         ///
-        /// Rule: STATEMENT -> ASSIGNMENT ";" | EMPTY
+        /// Rule: STATEMENT -> (ASSIGNMENT | FUNCTION_CALL) ;" | EMPTY
         /// </summary>
         private AbstractSyntaxTreeNode Statement() {
             AbstractSyntaxTreeNode node;
             if (tokenizer.Token.Type == TokenType.Id) {
-                node = AssignmentStatement();
+                if (tokenizer.Next().Token.Type == TokenType.LeftParenthesis) {
+                    node = FunctionCall();
+                } else {
+                    node = AssignmentStatement();
+                }
                 tokenizer = Eat(tokenizer, TokenType.SemiColon);
             } else {
                 node = EmptyStatement();

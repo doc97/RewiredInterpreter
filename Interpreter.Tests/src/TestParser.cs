@@ -55,7 +55,18 @@ namespace Rewired.Interpreter.Tests {
             Assert.AreEqual(visitor.ParameterVisitedCount, 2);
         }
 
-        [TestCase("a( := 1;")]
+        [TestCase("func A() {} A();")]
+        [TestCase("func B(int b) {} B(0);")]
+        [TestCase("func C(int c1, int c2) {} C(1, 2);")]
+        public void Parse_FunctionCall(string text) {
+            Parser parser = new Parser(new Tokenizer(text));
+            AbstractSyntaxTreeNode root = parser.Parse();
+            TestASTNodeVisitor visitor = new TestASTNodeVisitor();
+            root.VisitNode(visitor);
+            Assert.IsTrue(visitor.FunctionCallVisited);
+        }
+
+        [TestCase("a/ := 1;")]
         public void Parse_InvalidTokenThrowsException(string text) {
             Parser parser = new Parser(new Tokenizer(text));
             try {
@@ -63,7 +74,7 @@ namespace Rewired.Interpreter.Tests {
                 Assert.Fail("Test case does not fail and did not throw an exception");
             } catch (ParserError err) {
                 Assert.AreEqual(ParserError.ErrorCode.UnexpectedToken, err.Code);
-                Assert.AreEqual("(", err.Token.Value);
+                Assert.AreEqual("/", err.Token.Value);
             } catch (Exception ex) {
                 Assert.Fail(string.Format(
                     "Unrecognized exception thrown: ({0}): {1}",
@@ -84,6 +95,7 @@ namespace Rewired.Interpreter.Tests {
             public int ParameterVisitedCount { get; private set; }
             public bool ParameterVisited { get => ParameterVisitedCount > 0; }
             public bool FunctionDeclarationVisited { get; private set; }
+            public bool FunctionCallVisited { get; private set; }
             public bool CompoundVisited { get; private set; }
 
             public object Visit(NoOp op) {
@@ -140,6 +152,11 @@ namespace Rewired.Interpreter.Tests {
                 foreach (AbstractSyntaxTreeNode param in func.Parameters) {
                     param.VisitNode(this);
                 }
+                return null;
+            }
+
+            public object Visit(FunctionCall call) {
+                FunctionCallVisited = true;
                 return null;
             }
 

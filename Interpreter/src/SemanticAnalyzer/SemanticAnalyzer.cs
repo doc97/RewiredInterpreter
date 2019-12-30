@@ -158,6 +158,10 @@ namespace Rewired.Interpreter {
             return null;
         }
 
+        public object Visit(FunctionCall call) {
+            return null;
+        }
+
         public object Visit(Program program) {
             ScopedSymbolTable globalScope = new ScopedSymbolTable("Global", 0, null);
             globalScope.InitBuiltInTypes();

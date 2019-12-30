@@ -138,6 +138,10 @@ namespace Rewired.Interpreter {
             return null;
         }
 
+        public object Visit(FunctionCall call) {
+            return null;
+        }
+
         public object Visit(Program program) {
             ActivationRecord record = new ActivationRecord(
                 ActivationRecord.Type.Program,
