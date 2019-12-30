@@ -63,7 +63,7 @@ namespace Rewired.Interpreter {
         /// A new `Tokenizer` with the next token and the remaining text.
         /// Returns and empty tokenizer the text is empty.
         /// </returns>
-        /// <exception href="TokenizerError">
+        /// <exception cref="TokenizerError">
         /// Throws if no token could be recognized.
         /// </exception>
         public Tokenizer Next() {

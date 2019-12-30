@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Rewired.Interpreter {
 
     /// <summary>
-    /// A light wrapper for a stack containing <see href="ActivationRecords" />.
+    /// A light wrapper for a stack containing <see cref="ActivationRecords" />.
     /// </summary>
     public class CallStack {
 
@@ -29,7 +29,7 @@ namespace Rewired.Interpreter {
         /// Pushes a non-null record on top of the stack.
         /// </summary>
         /// <param name="record">The record to push</param>
-        /// <exception href="ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         /// Throws if trying to push a null record.
         /// </exception>
         public void Push(ActivationRecord record) {

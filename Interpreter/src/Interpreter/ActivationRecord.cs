@@ -69,7 +69,7 @@ namespace Rewired.Interpreter {
         /// </summary>
         /// <param name="name">The name of the member</param>
         /// <returns>The value of the member</returns>
-        /// <exception href="KeyNotFoundException">
+        /// <exception cref="KeyNotFoundException">
         /// Throws if no member with the name has been stored.
         /// </exception>
         public int Get(string name) {

@@ -48,7 +48,7 @@ namespace Rewired.Interpreter {
         /// </summary>
         /// <param name="name">The name of the variable</param>
         /// <returns>The stored value</returns>
-        /// <exception href="KeyNotFoundException">
+        /// <exception cref="KeyNotFoundException">
         /// Throws if a variable with the name cannot be found.
         /// </exception>
         public int GetGlobalVar(string name) {
