@@ -21,6 +21,17 @@ namespace Rewired.Interpreter {
         private ScopedSymbolTable currentScope;
 
         /// <summary>
+        /// Whether to exit the root scope after analyzing the AST.
+        /// To perform testing or debugging, please set this to false.
+        /// </summary>
+        public bool ShouldExitRootScope { get; set; } = true;
+
+        /// <summary>
+        /// Whether logging is enabled / disabled.
+        /// </summary>
+        public bool IsLoggingEnabled { get; set; } = false;
+
+        /// <summary>
         /// Instantiates a new instance with built-in symbols added.
         /// </summary>
         /// <param name="tree">The AST to analyze</param>
@@ -41,10 +52,13 @@ namespace Rewired.Interpreter {
 
         /// <summary>
         /// Prints out the current scope.
+        /// Won't print unless <see cref="IsLoggingEnabled"/> is set to `true`.
         /// </summary>
         public void PrintScopeInfo() {
-            Console.WriteLine("--== Semantic Analysis ==--");
-            Console.WriteLine(currentScope);
+            if (IsLoggingEnabled) {
+                Console.WriteLine("--== Semantic Analysis ==--");
+                Console.WriteLine(currentScope);
+            }
         }
 
         #region IAbstractSyntaxTreeNodeVisitor
@@ -150,10 +164,9 @@ namespace Rewired.Interpreter {
 
             currentScope = globalScope;
             object retVal = program.Block.VisitNode(this);
-            /* The current scope is not exited with:
-             *   currentScope = currentScope.Parent
-             * because it is needed for testing.
-            */
+            if (ShouldExitRootScope) {
+                currentScope = currentScope.Parent;
+            }
             return retVal;
         }
         #endregion

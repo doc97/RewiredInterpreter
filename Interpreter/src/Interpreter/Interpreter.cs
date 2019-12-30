@@ -14,7 +14,16 @@ namespace Rewired.Interpreter {
         /// </summary>
         private AbstractSyntaxTreeNode tree;
 
+        /// <summary>
+        /// The call stack containing the stack frames/activation records.
+        /// </summary>
         private CallStack stack;
+
+        /// <summary>
+        /// Whether to pop the stack after interpreting the AST.
+        /// To perform testing or debugging, please set this to false.
+        /// </summary>
+        public bool ShouldPopStackAtEnd { get; set; } = true;
 
         /// <summary>
         /// Instantiates a new instance with an empty global scope.
@@ -126,10 +135,9 @@ namespace Rewired.Interpreter {
 
             stack.Push(record);
             object ret = program.Block.VisitNode(this);
-            /* The current stack frame is not popped with:
-             *   stack.Pop();
-             * because it is needed for testing.
-            */
+            if (ShouldPopStackAtEnd) {
+                stack.Pop();
+            }
             return ret;
         }
         #endregion

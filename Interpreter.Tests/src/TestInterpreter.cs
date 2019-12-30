@@ -14,6 +14,7 @@ namespace Rewired.Interpreter.Tests {
         public int Interpret_Calculation(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
+            interpreter.ShouldPopStackAtEnd = false;
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
         }
@@ -24,6 +25,7 @@ namespace Rewired.Interpreter.Tests {
         public int Interpret_RespectsArithmeticPrecedence(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
+            interpreter.ShouldPopStackAtEnd = false;
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
         }
@@ -33,6 +35,7 @@ namespace Rewired.Interpreter.Tests {
         public int Interprets_RespectParentheses(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
+            interpreter.ShouldPopStackAtEnd = false;
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
         }
@@ -41,6 +44,7 @@ namespace Rewired.Interpreter.Tests {
         public int Interpret_HandleNestedParentheses(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
+            interpreter.ShouldPopStackAtEnd = false;
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
         }
@@ -49,6 +53,7 @@ namespace Rewired.Interpreter.Tests {
         public int Interpret_HandleUnaryOperator(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
+            interpreter.ShouldPopStackAtEnd = false;
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
         }
@@ -58,6 +63,7 @@ namespace Rewired.Interpreter.Tests {
         public int Interpret_HandleVariableValues(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
+            interpreter.ShouldPopStackAtEnd = false;
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
         }
