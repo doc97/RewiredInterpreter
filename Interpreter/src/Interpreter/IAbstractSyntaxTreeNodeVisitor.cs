@@ -10,14 +10,14 @@ namespace Rewired.Interpreter {
     public interface IAbstractSyntaxTreeNodeVisitor {
         object Visit(NoOp op);
         object Visit(UnaryOp op);
-        object Visit(BinOp op);
+        object Visit(BinaryOp op);
         object Visit(Int num);
         object Visit(Assign assign);
         object Visit(Var var);
         object Visit(Type type);
         object Visit(Parameter param);
         object Visit(Compound comp);
-        object Visit(FuncDecl func);
+        object Visit(FunctionDeclaration func);
         object Visit(Program program);
     }
 

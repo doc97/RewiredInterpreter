@@ -87,7 +87,7 @@ namespace Rewired.Interpreter {
             }
         }
 
-        public object Visit(BinOp op) {
+        public object Visit(BinaryOp op) {
             switch (op.Op.Type) {
                 case TokenType.Plus:
                     return (int) op.Left.VisitNode(this) + (int) op.Right.VisitNode(this);
@@ -134,7 +134,7 @@ namespace Rewired.Interpreter {
             return null;
         }
 
-        public object Visit(FuncDecl func) {
+        public object Visit(FunctionDeclaration func) {
             return null;
         }
 

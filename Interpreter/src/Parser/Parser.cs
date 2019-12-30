@@ -71,7 +71,7 @@ namespace Rewired.Interpreter {
             tokenizer = Eat(tokenizer, TokenType.LeftParenthesis);
             AbstractSyntaxTreeNode[] parameters = Parameters();
             tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
-            return new FuncDecl(funcName, parameters, Block());
+            return new FunctionDeclaration(funcName, parameters, Block());
         }
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace Rewired.Interpreter {
                     break;
                 }
 
-                node = new BinOp(node, token, Term());
+                node = new BinaryOp(node, token, Term());
             }
             return node;
         }
@@ -235,7 +235,7 @@ namespace Rewired.Interpreter {
                     break;
                 }
 
-                node = new BinOp(node, token, Factor());
+                node = new BinaryOp(node, token, Factor());
             }
             return node;
         }

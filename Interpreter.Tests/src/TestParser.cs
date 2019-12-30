@@ -32,7 +32,7 @@ namespace Rewired.Interpreter.Tests {
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
             root.VisitNode(visitor);
-            return visitor.FuncDeclVisited;
+            return visitor.FunctionDeclarationVisited;
         }
 
         [Test]
@@ -76,14 +76,14 @@ namespace Rewired.Interpreter.Tests {
 
             public bool NoOpVisited { get; private set; }
             public bool UnaryOpVisited { get; private set; }
-            public bool BinOpVisited { get; private set; }
+            public bool BinaryOpVisited { get; private set; }
             public bool IntVisited { get; private set; }
             public bool AssignVisited { get; private set; }
             public bool VarVisited { get; private set; }
             public bool TypeVisited { get; private set; }
             public int ParameterVisitedCount { get; private set; }
             public bool ParameterVisited { get => ParameterVisitedCount > 0; }
-            public bool FuncDeclVisited { get; private set; }
+            public bool FunctionDeclarationVisited { get; private set; }
             public bool CompoundVisited { get; private set; }
 
             public object Visit(NoOp op) {
@@ -96,8 +96,8 @@ namespace Rewired.Interpreter.Tests {
                 return null;
             }
 
-            public object Visit(BinOp op) {
-                BinOpVisited = true;
+            public object Visit(BinaryOp op) {
+                BinaryOpVisited = true;
                 return null;
             }
 
@@ -135,8 +135,8 @@ namespace Rewired.Interpreter.Tests {
                 return null;
             }
 
-            public object Visit(FuncDecl func) {
-                FuncDeclVisited = true;
+            public object Visit(FunctionDeclaration func) {
+                FunctionDeclarationVisited = true;
                 foreach (AbstractSyntaxTreeNode param in func.Parameters) {
                     param.VisitNode(this);
                 }

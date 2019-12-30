@@ -1,9 +1,9 @@
 namespace Rewired.Interpreter {
 
     /// <summary>
-    /// FuncDecl represents a function declaration.
+    /// FunctionDeclaration represents a function declaration.
     /// </summary>
-    public class FuncDecl : AbstractSyntaxTreeNode {
+    public class FunctionDeclaration : AbstractSyntaxTreeNode {
 
         /// <summary>
         /// Gets the name of the function.
@@ -33,7 +33,7 @@ namespace Rewired.Interpreter {
         /// <param name="parameters">The var nodes containing the
         /// parameters</param>
         /// <param name="block">A `Compound` node containing the statements</param>
-        public FuncDecl(Token name, AbstractSyntaxTreeNode[] parameters, AbstractSyntaxTreeNode block) {
+        public FunctionDeclaration(Token name, AbstractSyntaxTreeNode[] parameters, AbstractSyntaxTreeNode block) {
             Token = name;
             Parameters = parameters;
             Block = block;

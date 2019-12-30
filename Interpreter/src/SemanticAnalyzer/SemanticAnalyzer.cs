@@ -70,7 +70,7 @@ namespace Rewired.Interpreter {
             return op.Expr.VisitNode(this);
         }
 
-        public object Visit(BinOp op) {
+        public object Visit(BinaryOp op) {
             Symbol leftSymbol = (Symbol) op.Left.VisitNode(this);
             Symbol rightSymbol = (Symbol) op.Right.VisitNode(this);
             if (leftSymbol != rightSymbol) {
@@ -127,7 +127,7 @@ namespace Rewired.Interpreter {
             return null;
         }
 
-        public object Visit(FuncDecl func) {
+        public object Visit(FunctionDeclaration func) {
             if (currentScope.HasSymbol(func.Name)) {
                 throw new SemanticError(
                     SemanticError.ErrorCode.DuplicateId,

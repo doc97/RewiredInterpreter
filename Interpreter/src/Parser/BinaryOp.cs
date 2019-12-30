@@ -1,9 +1,9 @@
 namespace Rewired.Interpreter {
 
     /// <summary>
-    /// BinOp represents the binary operator AST node.
+    /// BinaryOp represents the binary operator AST node.
     /// </summary>
-    public class BinOp : AbstractSyntaxTreeNode {
+    public class BinaryOp : AbstractSyntaxTreeNode {
 
         /// <summary>
         /// Gets the left-hand operand.
@@ -29,7 +29,7 @@ namespace Rewired.Interpreter {
         /// <param name="left">The left-hand side</param>
         /// <param name="op">The operator token</param>
         /// <param name="right">The right-hand side</param>
-        public BinOp(AbstractSyntaxTreeNode left,
+        public BinaryOp(AbstractSyntaxTreeNode left,
                      Token op,
                      AbstractSyntaxTreeNode right) {
             Left = left;
