@@ -77,6 +77,7 @@ namespace Rewired.Interpreter {
             string text = Text;
             int line = Line;
             int column = Column;
+            int offset = 0; // used to skip 'f'/'F' in floats
             char currentChar = NextChar(text);
 
             while (currentChar != '\0') {
@@ -89,7 +90,7 @@ namespace Rewired.Interpreter {
                 } else if (char.IsLetter(currentChar)) {
                     token = GetId(text, line, column);
                 } else if ("0123456789".Contains(currentChar)) {
-                    token = new Token(TokenType.IntegerConst, GetInteger(text), line, column);
+                    token = GetNumber(text, line, column, ref offset);
                 } else if (currentChar == '+') {
                     token = new Token(TokenType.Plus, "+", line, column);
                 } else if (currentChar == '-') {
@@ -118,7 +119,7 @@ namespace Rewired.Interpreter {
                     throw new TokenizerError(currentChar, line, column, "Invalid syntax");
                 }
 
-                return new Tokenizer(text.Substring(token.Value.Length), token, line, column + token.Value.Length);
+                return new Tokenizer(text.Substring(token.Value.Length), token, line, column + offset + token.Value.Length);
             }
 
             return new Tokenizer("", new Token(TokenType.Eof, "", line, column), line, column);
@@ -154,7 +155,7 @@ namespace Rewired.Interpreter {
         /// </summary>
         /// <param name="text">The text to trim (not changed)</param>
         /// <param name="line">The current line number (may changes)</param>
-        /// <param name="text">The current column number (may change)</param>
+        /// <param name="column">The current column number (may change)</param>
         /// <returns>A new string with the whitespace removed.</returns>
         private string SkipWhitespace(string text, ref int line, ref int column) {
             for (int i = 0; i < text.Length; i++) {
@@ -184,6 +185,8 @@ namespace Rewired.Interpreter {
         /// Gets the next token which consists of alphanumeric characters.
         /// </summary>
         /// <param name="text">The text to traverse</param>
+        /// <param name="line">The current line number</param>
+        /// <param name="column">The current column number</param>
         /// <returns>The token, either an Id or a reserved keyword token.</returns>
         private Token GetId(string text, int line, int column) {
             string word = GetMultiCharValue(text, c => char.IsLetter(c));
@@ -194,6 +197,37 @@ namespace Rewired.Interpreter {
 
             string id = GetMultiCharValue(text, c => char.IsLetterOrDigit(c));
             return new Token(TokenType.Id, id, line, column);
+        }
+
+        /// <summary>
+        /// Gets the next token which is either an integer or a float.
+        /// </summary>
+        /// <param name="text">The text to traverse</param>
+        /// <param name="line">The current line number</param>
+        /// <param name="column">The current column number</param>
+        /// <param name="offset">
+        /// The current offset used to consume characters not used in token
+        /// </param>
+        /// <returns></returns>
+        private Token GetNumber(string text, int line, int column, ref int offset) {
+            string integer = GetInteger(text);
+            char nextChar = text.Length > integer.Length ? text[integer.Length] : '\0';
+            if (nextChar == '.') {
+                string decimals = text.Length > integer.Length + 1
+                                ? GetInteger(text.Substring(integer.Length + 1))
+                                : "";
+                int nextCharIdx = integer.Length + 1 + decimals.Length;
+                bool nextCharIsF = text.Length > nextCharIdx && (text[nextCharIdx] == 'f' || text[nextCharIdx] == 'F');
+                if (nextCharIsF) {
+                    offset++;
+                }
+                return new Token(TokenType.FloatConst, integer + "." + decimals, line, column);
+            } else if (nextChar == 'f' || nextChar == 'F') {
+                offset++;
+                return new Token(TokenType.FloatConst, integer, line, column);
+            } else {
+                return new Token(TokenType.IntegerConst, integer, line, column);
+            }
         }
 
         /// <summary>

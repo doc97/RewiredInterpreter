@@ -84,6 +84,18 @@ namespace Rewired.Interpreter.Tests {
             Assert.AreEqual(column, tokenizer.Token.Column);
         }
 
+        [TestCase("1f", "1", 1f)]
+        [TestCase("12F", "12", 12f)]
+        [TestCase("1.", "1.", 1f)]
+        [TestCase("1.2", "1.2", 1.2f)]
+        [TestCase("1.2f", "1.2", 1.2f)]
+        public void Next_FloatToken(string text, string str, float value) {
+            Tokenizer tokenizer = new Tokenizer(text).Next();
+            Assert.AreEqual(TokenType.FloatConst, tokenizer.Token.Type);
+            Assert.AreEqual(str, tokenizer.Token.Value);
+            Assert.AreEqual(value, float.Parse(tokenizer.Token.Value));
+        }
+
         [TestCase("#", 1, 1, '#')]
         [TestCase("a! := 1;", 1, 2, '!')]
         [TestCase("a := #4;", 1, 6, '#')]
