@@ -19,10 +19,10 @@ public class Program {
                 analyzer.PrintScopeInfo();
 
                 Interpreter interpreter = new Interpreter(tree);
-                interpreter.ShouldPopStackAtEnd = false;
-                interpreter.IsLoggingEnabled = true;
-                interpreter.Interpret();
-                interpreter.PrintCallStack();
+                object res = interpreter.Interpret();
+                if (res != null) {
+                    Console.WriteLine(res);
+                }
             } catch (Exception e) {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);

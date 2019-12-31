@@ -26,17 +26,6 @@ namespace Rewired.Interpreter {
         private Dictionary<string, FunctionDeclaration> functions;
 
         /// <summary>
-        /// Whether to pop the stack after interpreting the AST.
-        /// To perform testing or debugging, please set this to false.
-        /// </summary>
-        public bool ShouldPopStackAtEnd { get; set; } = true;
-
-        /// <summary>
-        /// Whether logging is enabled / disabled.
-        /// </summary>
-        public bool IsLoggingEnabled { get; set; } = false;
-
-        /// <summary>
         /// Instantiates a new instance with an empty global scope.
         /// </summary>
         /// <param name="tree">The AST to interpret</param>
@@ -49,33 +38,8 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Walks the AST.
         /// </summary>
-        public void Interpret() {
-            tree.VisitNode(this);
-        }
-
-        /// <summary>
-        /// Looks up the value of a variable stored in the global scope.
-        /// 
-        /// Should be called after `Interpret()` has been called. 
-        /// </summary>
-        /// <param name="name">The name of the variable</param>
-        /// <returns>The stored value</returns>
-        /// <exception cref="KeyNotFoundException">
-        /// Throws if a variable with the name cannot be found.
-        /// </exception>
-        public int GetGlobalVar(string name) {
-            int value;
-            if (stack.Peek().TryGet(name, out value)) {
-                return value;
-            }
-            throw new KeyNotFoundException();
-        }
-
-        public void PrintCallStack() {
-            if (IsLoggingEnabled) {
-                Console.WriteLine("--== Call Stack ==--");
-                Console.WriteLine(stack);
-            }
+        public object Interpret() {
+            return tree.VisitNode(this);
         }
 
         #region IAbstractSyntaxTreeNodeVisitor
@@ -177,16 +141,15 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Program program) {
-            stack.Push(new ActivationRecord(
+            ActivationRecord record = new ActivationRecord(
                 ActivationRecord.Type.Program,
                 program.Name,
                 1
-            ));
+            );
 
+            stack.Push(record);
             object ret = program.Block.VisitNode(this);
-            if (ShouldPopStackAtEnd) {
-                stack.Pop();
-            }
+            stack.Pop();
 
             return ret;
         }
