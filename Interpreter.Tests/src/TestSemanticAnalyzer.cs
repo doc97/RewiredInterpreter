@@ -23,8 +23,8 @@ namespace Rewired.Interpreter.Tests {
             } catch (Exception ex) {
                 Assert.Fail(string.Format(
                     "Unrecognized exception thrown: ({0}): {1}",
-                    ex.GetType(), ex.Message)
-                );
+                    ex.GetType(), ex.Message
+                ));
             }
         }
 
@@ -40,8 +40,26 @@ namespace Rewired.Interpreter.Tests {
             } catch (Exception ex) {
                 Assert.Fail(string.Format(
                     "Unrecognized exception thrown: ({0}): {1}",
-                    ex.GetType(), ex.Message)
-                );
+                    ex.GetType(), ex.Message
+                ));
+            }
+        }
+
+        [TestCase("func Sum(float a, int b) { return a + b; }")]
+        [TestCase("func Increment(float a) { return a + 1; }")]
+        public void TypeMismatchThrowsError(string text) {
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
+            try {
+                analyzer.Analyze();
+                Assert.Fail("Test case does not fail and did not throw an exception");
+            } catch (SemanticError err) {
+                Assert.AreEqual(SemanticError.ErrorCode.TypeMismatch, err.Code);
+            } catch (Exception ex) {
+                Assert.Fail(string.Format(
+                    "Unrecognized exception thrown: ({0}): {1}",
+                    ex.GetType(), ex.Message
+                ));
             }
         }
 

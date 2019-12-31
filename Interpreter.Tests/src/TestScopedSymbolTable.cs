@@ -9,8 +9,8 @@ namespace Rewired.Interpreter.Tests {
         public void Test_InitBuiltInTypes() {
             ScopedSymbolTable scope = new ScopedSymbolTable("", 1, null);
             scope.InitBuiltInTypes();
-            Assert.IsNotNull(scope.LookupSymbol("INTEGER"));
-            Assert.IsNotNull(scope.LookupSymbol("REAL"));
+            Assert.IsNotNull(scope.LookupSymbol("int"));
+            Assert.IsNotNull(scope.LookupSymbol("float"));
         }
 
         [Test]

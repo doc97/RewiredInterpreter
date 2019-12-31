@@ -85,7 +85,7 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Int num) {
-            return currentScope.LookupSymbol("INTEGER");
+            return currentScope.LookupSymbol("int");
         }
 
         public object Visit(Assign assign) {
@@ -99,6 +99,7 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Return ret) {
+            ret.Expr.VisitNode(this);
             return null;
         }
 

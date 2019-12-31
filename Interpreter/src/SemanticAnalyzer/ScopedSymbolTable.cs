@@ -49,8 +49,8 @@ namespace Rewired.Interpreter {
         /// Adds built-in types to the symbol table.
         /// </summary>
         public void InitBuiltInTypes() {
-            InsertSymbol(new BuiltInTypeSymbol("INTEGER"));
-            InsertSymbol(new BuiltInTypeSymbol("REAL"));
+            InsertSymbol(new BuiltInTypeSymbol("int"));
+            InsertSymbol(new BuiltInTypeSymbol("float"));
         }
 
         /// <summary>
