@@ -151,7 +151,7 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Block implements the BLOCK grammar rule.
         /// 
-        /// BLOCK -> "{" COMPOUND "}"
+        /// BLOCK -> "{" STATEMENT_LIST "}"
         /// </summary>
         private AbstractSyntaxTreeNode Block() {
             tokenizer = Eat(tokenizer, TokenType.LeftCurlyBracket);
@@ -169,19 +169,27 @@ namespace Rewired.Interpreter {
             List<AbstractSyntaxTreeNode> nodes = new List<AbstractSyntaxTreeNode>();
             nodes.Add(Statement());
 
-            while (tokenizer.Token.Type != TokenType.Eof
-                && tokenizer.Token.Type != TokenType.RightCurlyBracket
-                && tokenizer.Token.Type != TokenType.Func) {
-                nodes.Add(Statement());
-            }
+            bool skip = false;
+            while (true) {
+                TokenType tokenType = tokenizer.Token.Type;
+                if (tokenType == TokenType.Eof
+                || tokenType == TokenType.RightCurlyBracket
+                || tokenType == TokenType.Func) {
+                    return new Compound(nodes.ToArray());
+                }
 
-            return new Compound(nodes.ToArray());
+                AbstractSyntaxTreeNode statement = Statement();
+                if (skip) { continue; }
+                skip = tokenType == TokenType.Return;
+
+                nodes.Add(statement);
+            }
         }
 
         /// <summary>
         /// Statement implements the STATEMENT grammar rule.
         ///
-        /// Rule: STATEMENT -> (ASSIGNMENT | FUNCTION_CALL) ;" | EMPTY
+        /// Rule: STATEMENT -> (ASSIGNMENT | FUNCTION_CALL | RETURN) ;" | EMPTY
         /// </summary>
         private AbstractSyntaxTreeNode Statement() {
             AbstractSyntaxTreeNode node;
@@ -192,10 +200,23 @@ namespace Rewired.Interpreter {
                     node = AssignmentStatement();
                 }
                 tokenizer = Eat(tokenizer, TokenType.SemiColon);
+            } else if (tokenizer.Token.Type == TokenType.Return) {
+                node = ReturnStatement();
+                tokenizer = Eat(tokenizer, TokenType.SemiColon);
             } else {
                 node = EmptyStatement();
             }
             return node;
+        }
+
+        /// <summary>
+        /// ReturnStatement implements the RETURN grammar rule.
+        /// 
+        /// Rule: RETURN -> "return" EXPR
+        /// </summary>
+        private AbstractSyntaxTreeNode ReturnStatement() {
+            tokenizer = Eat(tokenizer, TokenType.Return);
+            return new Return(Expression());
         }
 
         /// <summary>
@@ -282,6 +303,7 @@ namespace Rewired.Interpreter {
         ///               | "-" FACTOR
         ///               | "(" EXPR ")"
         ///               | INTEGER_CONST
+        ///               | FUNCTION_CALL
         ///               | VAR
         /// </summary>
         private AbstractSyntaxTreeNode Factor() {
@@ -300,6 +322,8 @@ namespace Rewired.Interpreter {
             } else if (token.Type == TokenType.IntegerConst) {
                 tokenizer = Eat(tokenizer, TokenType.IntegerConst);
                 return new Int(token);
+            } else if (token.Type == TokenType.Id && tokenizer.Next().Token.Type == TokenType.LeftParenthesis) {
+                return FunctionCall();
             } else {
                 return Variable();
             }

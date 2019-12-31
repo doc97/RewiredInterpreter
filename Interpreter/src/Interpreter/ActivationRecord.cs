@@ -13,7 +13,8 @@ namespace Rewired.Interpreter {
         /// The type of activation record, like a program or a function.
         /// </summary>
         public enum Type {
-            Program
+            Program,
+            Function,
         }
 
         /// <summary>

@@ -56,6 +56,7 @@ namespace Rewired.Interpreter {
             Line = line;
             Column = column;
             reservedKeywords = new Dictionary<string, ReservedKeyword>() {
+                { "return", new ReservedKeyword(TokenType.Return, "return") },
                 { "func", new ReservedKeyword(TokenType.Func, "func") },
                 { "int", new ReservedKeyword(TokenType.IntegerType, "int") },
                 { "float", new ReservedKeyword(TokenType.FloatType, "float") },

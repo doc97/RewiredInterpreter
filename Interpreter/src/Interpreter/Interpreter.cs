@@ -20,6 +20,12 @@ namespace Rewired.Interpreter {
         private CallStack stack;
 
         /// <summary>
+        /// Functions are stored in a separate dictionary and is not a part
+        /// of the call stack.
+        /// </summary>
+        private Dictionary<string, FunctionDeclaration> functions;
+
+        /// <summary>
         /// Whether to pop the stack after interpreting the AST.
         /// To perform testing or debugging, please set this to false.
         /// </summary>
@@ -37,6 +43,7 @@ namespace Rewired.Interpreter {
         public Interpreter(AbstractSyntaxTreeNode tree) {
             this.tree = tree;
             stack = new CallStack();
+            functions = new Dictionary<string, FunctionDeclaration>();
         }
 
         /// <summary>
@@ -114,6 +121,10 @@ namespace Rewired.Interpreter {
             return null;
         }
 
+        public object Visit(Return ret) {
+            return ret.Expr.VisitNode(this);
+        }
+
         public object Visit(Var var) {
             // The semantic analyzer checks for unused variables
             return stack.Peek().Get(var.Value);
@@ -128,32 +139,55 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(Compound comp) {
+            // returns the value returned from visiting the last element in
+            // the compound statement.
+            object ret = null;
             foreach (AbstractSyntaxTreeNode child in comp.Children) {
-                child.VisitNode(this);
+                ret = child.VisitNode(this);
             }
-            return null;
+            return ret;
         }
 
         public object Visit(FunctionDeclaration func) {
+            functions.Add(func.Name, func);
             return null;
         }
 
         public object Visit(FunctionCall call) {
-            return null;
+            ActivationRecord record = new ActivationRecord(
+                ActivationRecord.Type.Function,
+                call.Name,
+                stack.Count + 1
+            );
+
+            // Add arguments to the activation record
+            FunctionDeclaration func = functions[call.Name];
+            for (int i = 0; i < call.Arguments.Length; i++) {
+                AbstractSyntaxTreeNode arg = call.Arguments[i];
+                Parameter param = (Parameter) func.Parameters[i];
+                string name = ((Var) param.Name).Value;
+                int value = (int) arg.VisitNode(this);
+                record.Set(name, value);
+            }
+
+            stack.Push(record);
+            object ret = functions[call.Name].Block.VisitNode(this);
+            stack.Pop();
+            return ret;
         }
 
         public object Visit(Program program) {
-            ActivationRecord record = new ActivationRecord(
+            stack.Push(new ActivationRecord(
                 ActivationRecord.Type.Program,
                 program.Name,
                 1
-            );
+            ));
 
-            stack.Push(record);
             object ret = program.Block.VisitNode(this);
             if (ShouldPopStackAtEnd) {
                 stack.Pop();
             }
+
             return ret;
         }
         #endregion

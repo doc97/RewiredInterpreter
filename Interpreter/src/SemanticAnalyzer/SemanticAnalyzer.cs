@@ -98,6 +98,10 @@ namespace Rewired.Interpreter {
             return null;
         }
 
+        public object Visit(Return ret) {
+            return null;
+        }
+
         public object Visit(Var var) {
             string varName = var.Value;
             Symbol varSymbol = currentScope.LookupVariable(varName);
@@ -146,7 +150,7 @@ namespace Rewired.Interpreter {
             }
 
             currentScope.InsertSymbol(new FunctionSymbol(func.Name, paramSymbols));
-            currentScope = new ScopedSymbolTable("", 1, currentScope);
+            currentScope = new ScopedSymbolTable("", currentScope.Level + 1, currentScope);
 
             foreach (VarSymbol param in paramSymbols) {
                 currentScope.InsertVariable(param);

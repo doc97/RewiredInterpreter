@@ -67,6 +67,26 @@ namespace Rewired.Interpreter.Tests {
             interpreter.Interpret();
             return interpreter.GetGlobalVar("a");
         }
+
+        [TestCase("a := 0; func One() { return 1; } a := One();", ExpectedResult = 1)]
+        [TestCase("func Two() { return 2; } a := Two();", ExpectedResult = 2)]
+        [TestCase("func Two() { return 2; } func Double(int n) { return 2 * n; } a := Double(Two());", ExpectedResult = 4)]
+        public int Interpret_FunctionCall_Return(string text) {
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            Interpreter interpreter = new Interpreter(tree);
+            interpreter.ShouldPopStackAtEnd = false;
+            interpreter.Interpret();
+            return interpreter.GetGlobalVar("a");
+        }
+
+        [TestCase("func Sum(int a, int b) { return a + b; } a := Sum(1, 2);", ExpectedResult = 3)]
+        public int Interpret_FunctionCall_Parameters(string text) {
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            Interpreter interpreter = new Interpreter(tree);
+            interpreter.ShouldPopStackAtEnd = false;
+            interpreter.Interpret();
+            return interpreter.GetGlobalVar("a");
+        }
     }
 
 }

@@ -55,6 +55,16 @@ namespace Rewired.Interpreter.Tests {
             Assert.AreEqual(visitor.ParameterVisitedCount, 2);
         }
 
+        [Test]
+        public void Parse_FunctionDeclaration_ReturnStatement() {
+            Parser parser = new Parser(new Tokenizer("func A() { return 0; }"));
+            AbstractSyntaxTreeNode root = parser.Parse();
+            TestASTNodeVisitor visitor = new TestASTNodeVisitor();
+            root.VisitNode(visitor);
+            // Return statement only visited during interpretation
+            Assert.IsFalse(visitor.ReturnVisited);
+        }
+
         [TestCase("func A() {} A();")]
         [TestCase("func B(int b) {} B(0);")]
         [TestCase("func C(int c1, int c2) {} C(1, 2);")]
@@ -90,6 +100,7 @@ namespace Rewired.Interpreter.Tests {
             public bool BinaryOpVisited { get; private set; }
             public bool IntVisited { get; private set; }
             public bool AssignVisited { get; private set; }
+            public bool ReturnVisited { get; private set; }
             public bool VarVisited { get; private set; }
             public bool TypeVisited { get; private set; }
             public int ParameterVisitedCount { get; private set; }
@@ -120,6 +131,11 @@ namespace Rewired.Interpreter.Tests {
 
             public object Visit(Assign assign) {
                 AssignVisited = true;
+                return null;
+            }
+
+            public object Visit(Return ret) {
+                ReturnVisited = true;
                 return null;
             }
 

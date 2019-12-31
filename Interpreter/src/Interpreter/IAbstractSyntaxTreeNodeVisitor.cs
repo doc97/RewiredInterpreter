@@ -13,6 +13,7 @@ namespace Rewired.Interpreter {
         object Visit(BinaryOp op);
         object Visit(Int num);
         object Visit(Assign assign);
+        object Visit(Return ret);
         object Visit(Var var);
         object Visit(Type type);
         object Visit(Parameter param);

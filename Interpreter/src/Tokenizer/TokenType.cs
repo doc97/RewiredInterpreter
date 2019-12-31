@@ -21,6 +21,7 @@ namespace Rewired.Interpreter {
         Comma,
         Id,
         Func,
+        Return,
         Eof
     }
 }
