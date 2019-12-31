@@ -83,6 +83,7 @@ TERM -> FACTOR (("*" | "/") FACTOR)*
 FACTOR -> "+" FACTOR
         | "-" FACTOR
         | "(" EXPR ")"
+        | FLOAT_CONST
         | INTEGER_CONST
         | FUNCTION_CALL
         | VAR
