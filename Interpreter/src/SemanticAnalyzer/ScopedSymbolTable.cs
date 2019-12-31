@@ -108,15 +108,17 @@ namespace Rewired.Interpreter {
 
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("{0, -12} | {1}\n", "Name", "Symbol");
-            sb.Append("--------------------= VARIABLES =------------------------------\n");
+            sb.AppendLine("-------------------------------------------------=( VARIABLES )=--");
+            sb.AppendFormat("{0, -12} | {1}\n\n", "Name", "Symbol");
             foreach (KeyValuePair<string, Symbol> pair in variables) {
                 sb.AppendFormat("{0, -12} | {1}\n", pair.Key, pair.Value, "\n");
             }
-            sb.Append("----------------------= OTHER =--------------------------------\n");
+            sb.AppendLine("-----------------------------------------------------=( OTHER )=--");
+            sb.AppendFormat("{0, -12} | {1}\n\n", "Name", "Symbol");
             foreach (KeyValuePair<string, Symbol> pair in symbols) {
                 sb.AppendFormat("{0, -12} | {1}\n", pair.Key, pair.Value, "\n");
             }
+            sb.AppendLine("------------------------------------------------------------------");
             return sb.ToString();
         }
     }
