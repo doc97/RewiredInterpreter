@@ -56,13 +56,21 @@ namespace Rewired.Interpreter.Tests {
         }
 
         [Test]
+        public void Parse_FunctionDeclaration_Body() {
+            Parser parser = new Parser(new Tokenizer("func A() { a := 2; }"));
+            AbstractSyntaxTreeNode root = parser.Parse();
+            TestASTNodeVisitor visitor = new TestASTNodeVisitor();
+            root.VisitNode(visitor);
+            Assert.IsTrue(visitor.AssignVisited);
+        }
+
+        [Test]
         public void Parse_FunctionDeclaration_ReturnStatement() {
             Parser parser = new Parser(new Tokenizer("func A() { return 0; }"));
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
             root.VisitNode(visitor);
-            // Return statement only visited during interpretation
-            Assert.IsFalse(visitor.ReturnVisited);
+            Assert.IsTrue(visitor.ReturnVisited);
         }
 
         [TestCase("func A() {} A();")]
@@ -136,6 +144,7 @@ namespace Rewired.Interpreter.Tests {
 
             public object Visit(Return ret) {
                 ReturnVisited = true;
+                ret.Expr.VisitNode(this);
                 return null;
             }
 
@@ -168,6 +177,7 @@ namespace Rewired.Interpreter.Tests {
                 foreach (AbstractSyntaxTreeNode param in func.Parameters) {
                     param.VisitNode(this);
                 }
+                func.Block.VisitNode(this);
                 return null;
             }
 
