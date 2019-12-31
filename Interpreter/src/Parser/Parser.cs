@@ -192,19 +192,22 @@ namespace Rewired.Interpreter {
         /// Rule: STATEMENT -> (ASSIGNMENT | FUNCTION_CALL | RETURN) ;" | EMPTY
         /// </summary>
         private AbstractSyntaxTreeNode Statement() {
-            AbstractSyntaxTreeNode node;
-            if (tokenizer.Token.Type == TokenType.Id) {
+            AbstractSyntaxTreeNode node = null;
+            TokenType type = tokenizer.Token.Type;
+            if (type == TokenType.Id) {
                 if (tokenizer.Next().Token.Type == TokenType.LeftParenthesis) {
                     node = FunctionCall();
                 } else {
                     node = AssignmentStatement();
                 }
                 tokenizer = Eat(tokenizer, TokenType.SemiColon);
-            } else if (tokenizer.Token.Type == TokenType.Return) {
+            } else if (type == TokenType.Return) {
                 node = ReturnStatement();
                 tokenizer = Eat(tokenizer, TokenType.SemiColon);
-            } else {
+            } else if (type == TokenType.RightCurlyBracket || type == TokenType.Eof) {
                 node = EmptyStatement();
+            } else {
+                ErrorUnexpectedToken(tokenizer.Token);
             }
             return node;
         }
@@ -338,12 +341,17 @@ namespace Rewired.Interpreter {
             if (type == tokenizer.Token.Type) {
                 return tokenizer.Next();
             } else {
-                throw new ParserError(
-                    ParserError.ErrorCode.UnexpectedToken,
-                    tokenizer.Token,
-                    string.Format("Error: Unexpected token '{0}'", tokenizer.Token.Value)
-                );
+                ErrorUnexpectedToken(tokenizer.Token);
+                return null;
             }
+        }
+
+        private void ErrorUnexpectedToken(Token token) {
+            throw new ParserError(
+                ParserError.ErrorCode.UnexpectedToken,
+                token,
+                string.Format("Error: Unexpected token '{0}'", token.Value)
+            );
         }
     }
 
