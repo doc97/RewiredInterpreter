@@ -119,7 +119,12 @@ namespace Rewired.Interpreter {
                     throw new TokenizerError(currentChar, line, column, "Invalid syntax");
                 }
 
-                return new Tokenizer(text.Substring(token.Value.Length), token, line, column + offset + token.Value.Length);
+                return new Tokenizer(
+                    text.Substring(token.Value.Length + offset),
+                    token,
+                    line,
+                    column + token.Value.Length + offset
+                );
             }
 
             return new Tokenizer("", new Token(TokenType.Eof, "", line, column), line, column);

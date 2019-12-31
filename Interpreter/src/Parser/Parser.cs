@@ -305,6 +305,7 @@ namespace Rewired.Interpreter {
         /// Rule: FACTOR -> "+" FACTOR
         ///               | "-" FACTOR
         ///               | "(" EXPR ")"
+        ///               | FLOAT_CONST
         ///               | INTEGER_CONST
         ///               | FUNCTION_CALL
         ///               | VAR
@@ -322,6 +323,9 @@ namespace Rewired.Interpreter {
                 AbstractSyntaxTreeNode node = Expression();
                 tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
                 return node;
+            } else if (token.Type == TokenType.FloatConst) {
+                tokenizer = Eat(tokenizer, TokenType.FloatConst);
+                return new Float(token);
             } else if (token.Type == TokenType.IntegerConst) {
                 tokenizer = Eat(tokenizer, TokenType.IntegerConst);
                 return new Int(token);

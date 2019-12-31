@@ -73,6 +73,10 @@ namespace Rewired.Interpreter {
             }
         }
 
+        public object Visit(Float num) {
+            return float.Parse(num.Value);
+        }
+
         public object Visit(Int num) {
             return int.Parse(num.Value);
         }

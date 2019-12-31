@@ -106,6 +106,7 @@ namespace Rewired.Interpreter.Tests {
             public bool NoOpVisited { get; private set; }
             public bool UnaryOpVisited { get; private set; }
             public bool BinaryOpVisited { get; private set; }
+            public bool FloatVisited { get; private set; }
             public bool IntVisited { get; private set; }
             public bool AssignVisited { get; private set; }
             public bool ReturnVisited { get; private set; }
@@ -129,6 +130,11 @@ namespace Rewired.Interpreter.Tests {
 
             public object Visit(BinaryOp op) {
                 BinaryOpVisited = true;
+                return null;
+            }
+
+            public object Visit(Float num) {
+                FloatVisited = true;
                 return null;
             }
 

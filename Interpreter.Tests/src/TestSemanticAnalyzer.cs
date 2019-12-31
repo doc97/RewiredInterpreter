@@ -45,6 +45,7 @@ namespace Rewired.Interpreter.Tests {
             }
         }
 
+        [TestCase("a := 1f + 1;")]
         [TestCase("func Sum(float a, int b) { return a + b; }")]
         [TestCase("func Increment(float a) { return a + 1; }")]
         public void TypeMismatchThrowsError(string text) {
