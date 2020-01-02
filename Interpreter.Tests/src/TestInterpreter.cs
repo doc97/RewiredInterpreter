@@ -48,6 +48,15 @@ namespace Rewired.Interpreter.Tests {
             return (int) interpreter.Interpret();
         }
 
+        [TestCase("return 2f;", ExpectedResult = 2)]
+        [TestCase("return 2.5f;", ExpectedResult = 2.5f)]
+        [TestCase("return 2.5f + 1f;", ExpectedResult = 3.5f)]
+        public float Interpret_FloatCalculation(string text) {
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            Interpreter interpreter = new Interpreter(tree);
+            return (float) interpreter.Interpret();
+        }
+
         [TestCase("x := 2; return x + 3;", ExpectedResult = 5)]
         [TestCase("a := 3; b := a * 2; return b - 2;", ExpectedResult = 4)]
         public int Interpret_HandleVariableValues(string text) {

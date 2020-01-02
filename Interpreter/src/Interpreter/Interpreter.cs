@@ -48,29 +48,67 @@ namespace Rewired.Interpreter {
         }
 
         public object Visit(UnaryOp op) {
+            object expr = op.Expr.VisitNode(this);
             switch (op.Op.Type) {
                 case TokenType.Plus:
-                    return +(int) op.Expr.VisitNode(this);
+                    if (expr is int) {
+                        return +(int) expr;
+                    } else if (expr is float) {
+                        return +(float) expr;
+                    }
+                    break;
                 case TokenType.Minus:
-                    return -(int) op.Expr.VisitNode(this);
-                default:
-                    throw new NotImplementedException("Unary operator not implemented: " + op.Op);
+                    if (expr is int) {
+                        return -(int) expr;
+                    } else if (expr is float) {
+                        return -(float) expr;
+                    }
+                    break;
             }
+            throw new NotImplementedException(string.Format(
+                "Unary operator '{0}' not implemented for the type '{1}'",
+                op.Op, expr.GetType()
+            ));
         }
 
         public object Visit(BinaryOp op) {
+            object left = op.Left.VisitNode(this);
+            object right = op.Right.VisitNode(this);
+
             switch (op.Op.Type) {
                 case TokenType.Plus:
-                    return (int) op.Left.VisitNode(this) + (int) op.Right.VisitNode(this);
+                    if (left is int) {
+                        return (int) left + (int) right;
+                    } else if (left is float) {
+                        return (float) left + (float) right;
+                    }
+                    break;
                 case TokenType.Minus:
-                    return (int) op.Left.VisitNode(this) - (int) op.Right.VisitNode(this);
+                    if (left is int) {
+                        return (int) left - (int) right;
+                    } else if (left is float) {
+                        return (float) left - (float) right;
+                    }
+                    break;
                 case TokenType.Asterisk:
-                    return (int) op.Left.VisitNode(this) * (int) op.Right.VisitNode(this);
+                    if (left is int) {
+                        return (int) left * (int) right;
+                    } else if (left is float) {
+                        return (float) left * (float) right;
+                    }
+                    break;
                 case TokenType.Slash:
-                    return (int) op.Left.VisitNode(this) / (int) op.Right.VisitNode(this);
-                default:
-                    throw new NotImplementedException("Binary operator not implemented: " + op.Op);
+                    if (left is int) {
+                        return (int) left / (int) right;
+                    } else if (left is float) {
+                        return (float) left / (float) right;
+                    }
+                    break;
             }
+            throw new NotImplementedException(string.Format(
+                "Binary operator '{0}' not implemented for the type '{1}'",
+                op.Op, left.GetType()
+            ));
         }
 
         public object Visit(Float num) {
