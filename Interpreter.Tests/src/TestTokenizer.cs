@@ -46,6 +46,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("func", ExpectedResult = TokenType.Func)]
         [TestCase("int", ExpectedResult = TokenType.IntegerType)]
         [TestCase("float", ExpectedResult = TokenType.FloatType)]
+        [TestCase("bool", ExpectedResult = TokenType.BoolType)]
         public TokenType Next_CorrectTokenType(string text) {
             Tokenizer tokenizer = new Tokenizer(text).Next();
             return tokenizer.Token.Type;
@@ -66,6 +67,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("func", ExpectedResult = "func")]
         [TestCase("int", ExpectedResult = "int")]
         [TestCase("float", ExpectedResult = "float")]
+        [TestCase("bool", ExpectedResult = "bool")]
         public string Next_CorrectTokenValue(string text) {
             Tokenizer tokenizer = new Tokenizer(text).Next();
             return tokenizer.Token.Value;

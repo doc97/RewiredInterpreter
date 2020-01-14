@@ -70,7 +70,7 @@ FUNCTION_CALL -> ID "(" ARGUMENTS ")"
 ARGUMENTS -> (EXPR ("," EXPR)*)?
 PARAMETERS -> (PARAMETER ("," PARAMETER)*)?
 PARAMETER -> TYPE ID
-TYPE -> "int" | "float"
+TYPE -> "int" | "float" | "bool"
 BLOCK -> "{" STATEMENT_LIST ";" "}"
 RETURN -> "return" EXPR
 STATEMENT_LIST -> STATEMENT+
@@ -78,11 +78,13 @@ STATEMENT -> (ASSIGNMENT | FUNCTION_CALL | RETURN) ";" | EMPTY
 ASSIGNMENT -> VAR ":=" EXPR
 VAR -> ID
 EMPTY -> ""
-EXPR -> TERM (("+" | "-") TERM)*
+EXPR -> NUM_EXPR | BOOL_EXPR
+BOOL_EXPR -> BOOL_CONST
+NUM_EXPR -> TERM (("+" | "-") TERM)*
 TERM -> FACTOR (("*" | "/") FACTOR)*
 FACTOR -> "+" FACTOR
         | "-" FACTOR
-        | "(" EXPR ")"
+        | "(" NUM_EXPR ")"
         | FLOAT_CONST
         | INTEGER_CONST
         | FUNCTION_CALL

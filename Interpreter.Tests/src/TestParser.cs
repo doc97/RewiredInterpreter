@@ -25,6 +25,12 @@ namespace Rewired.Interpreter.Tests {
             Assert.IsTrue(parser.Parse() is Program);
         }
 
+        [Test]
+        public void Parse_BooleanAssignment() {
+            Parser parser = new Parser(new Tokenizer("a := true;"));
+            Assert.IsTrue(parser.Parse() is Program);
+        }
+
         [TestCase("func A() { }", ExpectedResult = true)]
         [TestCase("a := 1;", ExpectedResult = false)]
         public bool Parse_FunctionDeclaration(string text) {
@@ -35,9 +41,11 @@ namespace Rewired.Interpreter.Tests {
             return visitor.FunctionDeclarationVisited;
         }
 
-        [Test]
-        public void Parse_FunctionDeclaration_WithOneParameter() {
-            Parser parser = new Parser(new Tokenizer("func A(int a) {}"));
+        [TestCase("int")]
+        [TestCase("float")]
+        [TestCase("bool")]
+        public void Parse_FunctionDeclaration_WithOneParameter(string type) {
+            Parser parser = new Parser(new Tokenizer(string.Format("func A({0} a) {{}}", type)));
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
             root.VisitNode(visitor);
@@ -45,9 +53,11 @@ namespace Rewired.Interpreter.Tests {
             Assert.IsTrue(visitor.ParameterVisited);
         }
 
-        [Test]
-        public void Parse_FunctionDeclaration_MultipleParameters() {
-            Parser parser = new Parser(new Tokenizer("func A(int a, int b) {}"));
+        [TestCase("int", "int")]
+        [TestCase("int", "bool")]
+        [TestCase("bool", "bool")]
+        public void Parse_FunctionDeclaration_MultipleParameters(string firstType, string secondType) {
+            Parser parser = new Parser(new Tokenizer(string.Format("func A({0} a, {1} b) {{}}", firstType, secondType)));
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
             root.VisitNode(visitor);
@@ -64,9 +74,12 @@ namespace Rewired.Interpreter.Tests {
             Assert.IsTrue(visitor.AssignVisited);
         }
 
-        [Test]
-        public void Parse_FunctionDeclaration_ReturnStatement() {
-            Parser parser = new Parser(new Tokenizer("func A() { return 0; }"));
+        [TestCase("0")]
+        [TestCase("1")]
+        [TestCase("true")]
+        [TestCase("false")]
+        public void Parse_FunctionDeclaration_ReturnStatement(string retValue) {
+            Parser parser = new Parser(new Tokenizer(string.Format("func A() {{ return {0}; }}", retValue)));
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
             root.VisitNode(visitor);
@@ -76,6 +89,8 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("func A() {} A();")]
         [TestCase("func B(int b) {} B(0);")]
         [TestCase("func C(int c1, int c2) {} C(1, 2);")]
+        [TestCase("func D(bool d1) {} D(true);")]
+        [TestCase("func E(int e1, bool e2) {} E(1, false);")]
         public void Parse_FunctionCall(string text) {
             Parser parser = new Parser(new Tokenizer(text));
             AbstractSyntaxTreeNode root = parser.Parse();
@@ -106,6 +121,7 @@ namespace Rewired.Interpreter.Tests {
             public bool NoOpVisited { get; private set; }
             public bool UnaryOpVisited { get; private set; }
             public bool BinaryOpVisited { get; private set; }
+            public bool BoolVisited { get; private set; }
             public bool FloatVisited { get; private set; }
             public bool IntVisited { get; private set; }
             public bool AssignVisited { get; private set; }
@@ -130,6 +146,11 @@ namespace Rewired.Interpreter.Tests {
 
             public object Visit(BinaryOp op) {
                 BinaryOpVisited = true;
+                return null;
+            }
+
+            public object Visit(Bool boolean) {
+                BoolVisited = true;
                 return null;
             }
 

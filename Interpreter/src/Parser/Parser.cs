@@ -112,7 +112,10 @@ namespace Rewired.Interpreter {
         /// PARAMETERS -> PARAMETER ("," PARAMETER)* | EMPTY
         /// </summary>
         private AbstractSyntaxTreeNode[] Parameters() {
-            if (tokenizer.Token.Type != TokenType.IntegerType && tokenizer.Token.Type != TokenType.FloatType) {
+            if (!IsOneOfTypes(tokenizer.Token,
+                              TokenType.IntegerType,
+                              TokenType.FloatType,
+                              TokenType.BoolType)) {
                 return new AbstractSyntaxTreeNode[0];
             }
 
@@ -140,7 +143,7 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Type implements the TYPE grammar rule.
         /// 
-        /// TYPE -> "int" | "float"
+        /// TYPE -> "int" | "float" | "bool"
         /// </summary>
         private AbstractSyntaxTreeNode Type() {
             Token token = tokenizer.Token;
@@ -257,10 +260,35 @@ namespace Rewired.Interpreter {
 
         /// <summary>
         /// Expression implements the EXPR grammar rule.
-        ///
-        /// Rule: EXPR -> TERM (("+" | "-") TERM)*
+        /// 
+        /// Rule: EXPR -> NUM_EXPR | BOOL_EXPR
         /// </summary>
         private AbstractSyntaxTreeNode Expression() {
+            Token token = tokenizer.Token;
+            if (token.Type == TokenType.BoolConst) {
+                return BooleanExpression();
+            } else {
+                return NumericalExpression();
+            }
+        }
+
+        /// <summary>
+        /// BooleanExpression implements the BOOL_EXPR grammar rule.
+        /// 
+        /// Rule: BOOL_EXPR -> BOOL_CONST
+        /// </summary>
+        private AbstractSyntaxTreeNode BooleanExpression() {
+            Token token = tokenizer.Token;
+            tokenizer = Eat(tokenizer, TokenType.BoolConst);
+            return new Bool(token);
+        }
+
+        /// <summary>
+        /// NumericalExpression implements the NUM_EXPR grammar rule.
+        ///
+        /// Rule: NUM_EXPR -> TERM (("+" | "-") TERM)*
+        /// </summary>
+        private AbstractSyntaxTreeNode NumericalExpression() {
             AbstractSyntaxTreeNode node = Term();
             while (tokenizer.Token.Type != TokenType.Eof) {
                 Token token = tokenizer.Token;
@@ -304,7 +332,7 @@ namespace Rewired.Interpreter {
         ///
         /// Rule: FACTOR -> "+" FACTOR
         ///               | "-" FACTOR
-        ///               | "(" EXPR ")"
+        ///               | "(" NUM_EXPR ")"
         ///               | FLOAT_CONST
         ///               | INTEGER_CONST
         ///               | FUNCTION_CALL
@@ -320,7 +348,7 @@ namespace Rewired.Interpreter {
                 return new UnaryOp(token, Factor());
             } else if (token.Type == TokenType.LeftParenthesis) {
                 tokenizer = Eat(tokenizer, TokenType.LeftParenthesis);
-                AbstractSyntaxTreeNode node = Expression();
+                AbstractSyntaxTreeNode node = NumericalExpression();
                 tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
                 return node;
             } else if (token.Type == TokenType.FloatConst) {
@@ -356,6 +384,15 @@ namespace Rewired.Interpreter {
                 token,
                 string.Format("Error: Unexpected token '{0}'", token.Value)
             );
+        }
+
+        private bool IsOneOfTypes(Token token, params TokenType[] types) {
+            foreach (TokenType t in types) {
+                if (token.Type == t) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
