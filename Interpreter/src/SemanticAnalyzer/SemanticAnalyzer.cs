@@ -111,6 +111,10 @@ namespace Rewired.Interpreter {
             return null;
         }
 
+        public object Visit(If ifStatement) {
+            return null;
+        }
+
         public object Visit(Var var) {
             string varName = var.Value;
             Symbol varSymbol = currentScope.LookupVariable(varName);

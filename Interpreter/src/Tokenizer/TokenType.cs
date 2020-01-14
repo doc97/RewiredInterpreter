@@ -25,6 +25,8 @@ namespace Rewired.Interpreter {
         Id,
         Func,
         Return,
+        If,
+        Else,
         Eof
     }
 }

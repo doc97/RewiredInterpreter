@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System;
 using NUnit.Framework;
 
@@ -29,6 +30,16 @@ namespace Rewired.Interpreter.Tests {
         public void Parse_BooleanAssignment() {
             Parser parser = new Parser(new Tokenizer("a := true;"));
             Assert.IsTrue(parser.Parse() is Program);
+        }
+
+        [TestCase("if true {}", ExpectedResult = true)]
+        [TestCase("if false {}", ExpectedResult = true)]
+        public bool Parse_IfStatement(string text) {
+            Parser parser = new Parser(new Tokenizer(text));
+            AbstractSyntaxTreeNode root = parser.Parse();
+            TestASTNodeVisitor visitor = new TestASTNodeVisitor();
+            root.VisitNode(visitor);
+            return visitor.IfVisited;
         }
 
         [TestCase("func A() { }", ExpectedResult = true)]
@@ -126,6 +137,7 @@ namespace Rewired.Interpreter.Tests {
             public bool IntVisited { get; private set; }
             public bool AssignVisited { get; private set; }
             public bool ReturnVisited { get; private set; }
+            public bool IfVisited { get; private set; }
             public bool VarVisited { get; private set; }
             public bool TypeVisited { get; private set; }
             public int ParameterVisitedCount { get; private set; }
@@ -172,6 +184,11 @@ namespace Rewired.Interpreter.Tests {
             public object Visit(Return ret) {
                 ReturnVisited = true;
                 ret.Expr.VisitNode(this);
+                return null;
+            }
+
+            public object Visit(If ifStatement) {
+                IfVisited = true;
                 return null;
             }
 

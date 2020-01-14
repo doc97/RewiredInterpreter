@@ -58,6 +58,8 @@ namespace Rewired.Interpreter {
             reservedKeywords = new Dictionary<string, ReservedKeyword>() {
                 { "return", new ReservedKeyword(TokenType.Return, "return") },
                 { "func", new ReservedKeyword(TokenType.Func, "func") },
+                { "if", new ReservedKeyword(TokenType.If, "if") },
+                { "else", new ReservedKeyword(TokenType.Else, "else") },
                 { "int", new ReservedKeyword(TokenType.IntegerType, "int") },
                 { "float", new ReservedKeyword(TokenType.FloatType, "float") },
                 { "bool", new ReservedKeyword(TokenType.BoolType, "bool") },

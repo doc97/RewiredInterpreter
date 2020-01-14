@@ -73,6 +73,15 @@ namespace Rewired.Interpreter.Tests {
             return (int) interpreter.Interpret();
         }
 
+        [TestCase("if true { return 1; }", ExpectedResult = 1)]
+        [TestCase("if false { return 2; }", ExpectedResult = null)]
+        [TestCase("if false { return 2; } else { return 3; }", ExpectedResult = 3)]
+        public int? Interpret_IfStatement(string text) {
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            Interpreter interpreter = new Interpreter(tree);
+            return (int?) interpreter.Interpret();
+        }
+
         [TestCase("a := 0; func One() { return 1; } a := One(); return a;", ExpectedResult = 1)]
         [TestCase("func Two() { return 2; } return Two();", ExpectedResult = 2)]
         [TestCase("func Two() { return 2; } func Double(int n) { return 2 * n; } return Double(Two());", ExpectedResult = 4)]

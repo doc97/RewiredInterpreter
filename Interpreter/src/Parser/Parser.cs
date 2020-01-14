@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using System.Collections.Generic;
 
 namespace Rewired.Interpreter {
@@ -192,7 +193,7 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Statement implements the STATEMENT grammar rule.
         ///
-        /// Rule: STATEMENT -> (ASSIGNMENT | FUNCTION_CALL | RETURN) ;" | EMPTY
+        /// Rule: STATEMENT -> (ASSIGNMENT | IF_STATEMENT | FUNCTION_CALL | RETURN) ;" | EMPTY
         /// </summary>
         private AbstractSyntaxTreeNode Statement() {
             AbstractSyntaxTreeNode node = null;
@@ -207,6 +208,8 @@ namespace Rewired.Interpreter {
             } else if (type == TokenType.Return) {
                 node = ReturnStatement();
                 tokenizer = Eat(tokenizer, TokenType.SemiColon);
+            } else if (type == TokenType.If) {
+                node = IfStatement();
             } else if (type == TokenType.RightCurlyBracket || type == TokenType.Eof) {
                 node = EmptyStatement();
             } else {
@@ -236,6 +239,24 @@ namespace Rewired.Interpreter {
             tokenizer = Eat(tokenizer, TokenType.Assign);
             AbstractSyntaxTreeNode right = Expression();
             return new Assign(left, op, right);
+        }
+
+        /// <summary>
+        /// IfStatement implements the IF_STATEMENT grammar rule.
+        /// 
+        /// Rule: IF_STATEMENT -> "if" BOOL_EXPR BLOCK ("else" BLOCK)?
+        /// </summary>
+        /// <returns></returns>
+        private AbstractSyntaxTreeNode IfStatement() {
+            tokenizer = Eat(tokenizer, TokenType.If);
+            AbstractSyntaxTreeNode condition = BooleanExpression();
+            AbstractSyntaxTreeNode trueBlock = Block();
+            AbstractSyntaxTreeNode falseBlock = EmptyStatement();
+            if (tokenizer.Token.Type == TokenType.Else) {
+                tokenizer = Eat(tokenizer, TokenType.Else);
+                falseBlock = Block();
+            }
+            return new If(condition, trueBlock, falseBlock);
         }
 
         /// <summary>

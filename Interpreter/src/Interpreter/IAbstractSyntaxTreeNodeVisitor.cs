@@ -16,6 +16,7 @@ namespace Rewired.Interpreter {
         object Visit(Int num);
         object Visit(Assign assign);
         object Visit(Return ret);
+        object Visit(If ifStatement);
         object Visit(Var var);
         object Visit(Type type);
         object Visit(Parameter param);

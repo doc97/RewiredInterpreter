@@ -135,6 +135,15 @@ namespace Rewired.Interpreter {
             return ret.Expr.VisitNode(this);
         }
 
+        public object Visit(If ifStatement) {
+            bool isTrue = (bool) ifStatement.Condition.VisitNode(this);
+            if (isTrue) {
+                return ifStatement.TrueBlock.VisitNode(this);
+            } else {
+                return ifStatement.FalseBlock.VisitNode(this);
+            }
+        }
+
         public object Visit(Var var) {
             // The semantic analyzer checks for unused variables
             return stack.Peek().Get(var.Value);
