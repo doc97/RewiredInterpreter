@@ -1,4 +1,3 @@
-using System.Net.NetworkInformation;
 using System.Collections.Generic;
 
 namespace Rewired.Interpreter {
@@ -286,22 +285,64 @@ namespace Rewired.Interpreter {
         /// </summary>
         private AbstractSyntaxTreeNode Expression() {
             Token token = tokenizer.Token;
-            if (token.Type == TokenType.BoolConst) {
-                return BooleanExpression();
-            } else {
+
+            // Check if the type of expression can be determined early
+            if (IsOneOfTypes(token,
+                             TokenType.IntegerConst,
+                             TokenType.FloatConst,
+                             TokenType.Plus,
+                             TokenType.Minus)) {
                 return NumericalExpression();
+            } else if (token.Type == TokenType.BoolConst) {
+                return BooleanExpression();
+            }
+
+            // Save the original tokenizer
+            // and look-ahead one expression term
+            Tokenizer origTokenizer = tokenizer;
+
+            if (token.Type == TokenType.LeftParenthesis) {
+                tokenizer = Eat(tokenizer, TokenType.LeftParenthesis);
+                Expression();
+                tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
+            } else if (token.Type == TokenType.Id && tokenizer.Next().Token.Type == TokenType.LeftParenthesis) {
+                FunctionCall();
+            } else {
+                Variable();
+            }
+
+            // Determine the expression type based on the token (operator)
+            // after the first term
+            if (IsOneOfTypes(tokenizer.Token,
+                             TokenType.Plus,
+                             TokenType.Minus,
+                             TokenType.Asterisk,
+                             TokenType.Slash)) {
+                // restore tokenizer after look-ahead
+                tokenizer = origTokenizer;
+                return NumericalExpression();
+            } else { // Future conditional operators here
+                // restore tokenizer after look-ahead
+                tokenizer = origTokenizer;
+                return BooleanExpression();
             }
         }
 
         /// <summary>
         /// BooleanExpression implements the BOOL_EXPR grammar rule.
         /// 
-        /// Rule: BOOL_EXPR -> BOOL_CONST
+        /// Rule: BOOL_EXPR -> BOOL_CONST | FUNCTION_CALL | VAR
         /// </summary>
         private AbstractSyntaxTreeNode BooleanExpression() {
             Token token = tokenizer.Token;
-            tokenizer = Eat(tokenizer, TokenType.BoolConst);
-            return new Bool(token);
+            if (token.Type == TokenType.BoolConst) {
+                tokenizer = Eat(tokenizer, TokenType.BoolConst);
+                return new Bool(token);
+            } else if (token.Type == TokenType.Id && tokenizer.Next().Token.Type == TokenType.LeftParenthesis) {
+                return FunctionCall();
+            } else {
+                return Variable();
+            }
         }
 
         /// <summary>

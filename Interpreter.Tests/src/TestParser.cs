@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using System;
 using NUnit.Framework;
 
@@ -32,6 +31,12 @@ namespace Rewired.Interpreter.Tests {
             Assert.IsTrue(parser.Parse() is Program);
         }
 
+        [Test]
+        public void Parse_IfVarStatement() {
+            Parser parser = new Parser(new Tokenizer("if a {}"));
+            Assert.IsTrue(parser.Parse() is Program);
+        }
+
         [TestCase("if true {}", ExpectedResult = true)]
         [TestCase("if false {}", ExpectedResult = true)]
         public bool Parse_IfStatement(string text) {
@@ -40,6 +45,15 @@ namespace Rewired.Interpreter.Tests {
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
             root.VisitNode(visitor);
             return visitor.IfVisited;
+        }
+
+        [TestCase("return a;")]
+        [TestCase("return Sum();")]
+        [TestCase("return a + Sum();")]
+        [TestCase("return Sum(Term(), Term());")]
+        public void Parse_ReturnStatement(string text) {
+            Parser parser = new Parser(new Tokenizer(text));
+            Assert.IsTrue(parser.Parse() is Program);
         }
 
         [TestCase("func A() { }", ExpectedResult = true)]
