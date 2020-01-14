@@ -126,7 +126,7 @@ namespace Rewired.Interpreter {
         public object Visit(Assign assign) {
             // The left-hand side of an Assign statement is Var
             string varName = ((Var) assign.Left).Value;
-            int varValue = (int) assign.Right.VisitNode(this);
+            object varValue = assign.Right.VisitNode(this);
             stack.Peek().Set(varName, varValue);
             return null;
         }

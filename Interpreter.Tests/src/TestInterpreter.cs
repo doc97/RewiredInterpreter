@@ -57,6 +57,14 @@ namespace Rewired.Interpreter.Tests {
             return (float) interpreter.Interpret();
         }
 
+        [TestCase("a := false; return a;", ExpectedResult = false)]
+        [TestCase("a := true; return a;", ExpectedResult = true)]
+        public bool Interpret_BoolVariable(string text) {
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            Interpreter interpreter = new Interpreter(tree);
+            return (bool) interpreter.Interpret();
+        }
+
         [TestCase("x := 2; return x + 3;", ExpectedResult = 5)]
         [TestCase("a := 3; b := a * 2; return b - 2;", ExpectedResult = 4)]
         public int Interpret_HandleVariableValues(string text) {

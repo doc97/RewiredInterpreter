@@ -41,7 +41,7 @@ namespace Rewired.Interpreter.Tests {
         public int Get_IsCorrectValueWhenMemberIsSet(int value) {
             ActivationRecord ar = new ActivationRecord(ActivationRecord.Type.Program, "", 1);
             ar.Set("a", value);
-            return ar.Get("a");
+            return (int) ar.Get("a");
         }
 
         [Test]
