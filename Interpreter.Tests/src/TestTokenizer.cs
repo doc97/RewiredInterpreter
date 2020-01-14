@@ -96,6 +96,14 @@ namespace Rewired.Interpreter.Tests {
             Assert.AreEqual(value, float.Parse(tokenizer.Token.Value));
         }
 
+        [TestCase("true", true)]
+        [TestCase("false", false)]
+        public void Next_BoolToken(string text, bool value) {
+            Tokenizer tokenizer = new Tokenizer(text).Next();
+            Assert.AreEqual(TokenType.BoolConst, tokenizer.Token.Type);
+            Assert.AreEqual(value, bool.Parse(tokenizer.Token.Value));
+        }
+
         [TestCase("#", 1, 1, '#')]
         [TestCase("a! := 1;", 1, 2, '!')]
         [TestCase("a := #4;", 1, 6, '#')]

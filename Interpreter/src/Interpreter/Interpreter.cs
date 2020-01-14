@@ -111,6 +111,10 @@ namespace Rewired.Interpreter {
             ));
         }
 
+        public object Visit(Bool boolean) {
+            return bool.Parse(boolean.Value);
+        }
+
         public object Visit(Float num) {
             return float.Parse(num.Value);
         }

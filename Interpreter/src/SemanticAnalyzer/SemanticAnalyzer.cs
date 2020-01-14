@@ -84,6 +84,10 @@ namespace Rewired.Interpreter {
             return leftSymbol.Type;
         }
 
+        public object Visit(Bool boolean) {
+            return currentScope.LookupSymbol("bool");
+        }
+
         public object Visit(Float num) {
             return currentScope.LookupSymbol("float");
         }

@@ -26,7 +26,7 @@ namespace Rewired.Interpreter {
         public Token Token { get; }
 
         /// <summary>
-        /// Gets the line number of the next token..
+        /// Gets the line number of the next token.
         /// </summary>
         public int Line { get; }
 
@@ -60,6 +60,9 @@ namespace Rewired.Interpreter {
                 { "func", new ReservedKeyword(TokenType.Func, "func") },
                 { "int", new ReservedKeyword(TokenType.IntegerType, "int") },
                 { "float", new ReservedKeyword(TokenType.FloatType, "float") },
+                { "bool", new ReservedKeyword(TokenType.BoolType, "bool") },
+                { "true", new ReservedKeyword(TokenType.BoolConst, "true") },
+                { "false", new ReservedKeyword(TokenType.BoolConst, "false") },
             };
         }
 

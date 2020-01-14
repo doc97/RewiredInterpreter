@@ -11,6 +11,7 @@ namespace Rewired.Interpreter {
         object Visit(NoOp op);
         object Visit(UnaryOp op);
         object Visit(BinaryOp op);
+        object Visit(Bool boolean);
         object Visit(Float num);
         object Visit(Int num);
         object Visit(Assign assign);

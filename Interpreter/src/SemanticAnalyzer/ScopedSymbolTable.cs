@@ -51,6 +51,7 @@ namespace Rewired.Interpreter {
         public void InitBuiltInTypes() {
             InsertSymbol(new BuiltInTypeSymbol("int"));
             InsertSymbol(new BuiltInTypeSymbol("float"));
+            InsertSymbol(new BuiltInTypeSymbol("bool"));
         }
 
         /// <summary>
