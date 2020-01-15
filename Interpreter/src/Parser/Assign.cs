@@ -6,6 +6,12 @@ namespace Rewired.Interpreter {
     public class Assign : AbstractSyntaxTreeNode {
 
         /// <summary>
+        /// Gets the type of the variable to be assigned.
+        /// </summary>
+        /// <value>Can only be a `Type` AST node</value>
+        public AbstractSyntaxTreeNode Type { get; }
+
+        /// <summary>
         /// Gets the left-hand side AST node.
         /// </summary>
         /// <value>Can only be a `Var` AST node.</value>
@@ -29,9 +35,11 @@ namespace Rewired.Interpreter {
         /// <param name="left">The left-hand side</param>
         /// <param name="op">The operation token</param>
         /// <param name="right">The right-hand side</param>
-        public Assign(AbstractSyntaxTreeNode left,
+        public Assign(AbstractSyntaxTreeNode type,
+                      AbstractSyntaxTreeNode left,
                       Token op,
                       AbstractSyntaxTreeNode right) {
+            Type = type;
             Left = left;
             Op = op;
             Right = right;

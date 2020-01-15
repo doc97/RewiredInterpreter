@@ -6,10 +6,10 @@ namespace Rewired.Interpreter.Tests {
     [TestFixture]
     public class TestSemanticAnalyzer {
 
-        [TestCase("a := a;", 1, 6)]
-        [TestCase("a := b;", 1, 6)]
-        [TestCase("a := 1;\nb := a + c;", 2, 10)]
-        [TestCase("func A() {} a := A;", 1, 18)]
+        [TestCase("int a := a;", 1, 10)]
+        [TestCase("int a := b;", 1, 10)]
+        [TestCase("int a := 1;\nint b := a + c;", 2, 14)]
+        [TestCase("func A() {} int a := A;", 1, 22)]
         public void UndeclaredVariableThrowsError(string text, int errLine, int errCol) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);
@@ -45,7 +45,7 @@ namespace Rewired.Interpreter.Tests {
             }
         }
 
-        [TestCase("a := 1f + 1;")]
+        [TestCase("float a := 1f + 1;")]
         [TestCase("func Sum(float a, int b) { return a + b; }")]
         [TestCase("func Increment(float a) { return a + 1; }")]
         public void TypeMismatchThrowsError(string text) {
@@ -64,9 +64,8 @@ namespace Rewired.Interpreter.Tests {
             }
         }
 
-        [TestCase("globA := 1; globB := globA;", "Global variable is not accessible in global scope")]
-        [TestCase("globA := 0; func A() { a := 1; globA := a; }", "Global variable is not accessible in function scope")]
-        [TestCase("globA := 0; func A(int a) { globA := a; }", "Function parameter is not accessible in function scope")]
+        [TestCase("int globA := 1; int globB := globA;", "Global variable is not accessible in global scope")]
+        [TestCase("func A(int paramA) { int a := paramA; }", "Function parameter is not accessible in function scope")]
         public void ThrowsNoException(string text, string errMsg = "") {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             SemanticAnalyzer analyzer = new SemanticAnalyzer(tree);

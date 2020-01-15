@@ -14,20 +14,20 @@ namespace Rewired.Interpreter.Tests {
 
         [Test]
         public void Parse_HasNoState() {
-            Parser parser = new Parser(new Tokenizer("a := 1;"));
+            Parser parser = new Parser(new Tokenizer("int a := 1;"));
             Assert.IsTrue(parser.Parse() is Program);
             Assert.IsTrue(parser.Parse() is Program);
         }
 
         [Test]
         public void Parse_MultipleStatements() {
-            Parser parser = new Parser(new Tokenizer("a := 1; b := 2;"));
+            Parser parser = new Parser(new Tokenizer("int a := 1; int b := 2;"));
             Assert.IsTrue(parser.Parse() is Program);
         }
 
         [Test]
         public void Parse_BooleanAssignment() {
-            Parser parser = new Parser(new Tokenizer("a := true;"));
+            Parser parser = new Parser(new Tokenizer("bool a := true;"));
             Assert.IsTrue(parser.Parse() is Program);
         }
 
@@ -58,20 +58,20 @@ namespace Rewired.Interpreter.Tests {
             Assert.IsTrue(parser.Parse() is Program);
         }
 
-        [TestCase("a := 1 + 2;")]
-        [TestCase("a := 1 - 2;")]
-        [TestCase("a := 1 * 2;")]
-        [TestCase("a := 1 / 2;")]
-        [TestCase("a := true && true;")]
-        [TestCase("a := true || false;")]
-        [TestCase("a := 1 < 2;")]
-        [TestCase("a := 1 > 2;")]
-        [TestCase("a := 1 <= 2;")]
-        [TestCase("a := 1 >= 2;")]
-        [TestCase("a := 1 == 2;")]
-        [TestCase("a := 1 != 2;")]
-        [TestCase("a := 1+1 < 2+5;")]
-        [TestCase("a := Sum(1, 2) >= two;")]
+        [TestCase("int a := 1 + 2;")]
+        [TestCase("int a := 1 - 2;")]
+        [TestCase("int a := 1 * 2;")]
+        [TestCase("int a := 1 / 2;")]
+        [TestCase("bool a := true && true;")]
+        [TestCase("bool a := true || false;")]
+        [TestCase("bool a := 1 < 2;")]
+        [TestCase("bool a := 1 > 2;")]
+        [TestCase("bool a := 1 <= 2;")]
+        [TestCase("bool a := 1 >= 2;")]
+        [TestCase("bool a := 1 == 2;")]
+        [TestCase("bool a := 1 != 2;")]
+        [TestCase("bool a := 1+1 < 2+5;")]
+        [TestCase("bool a := Sum(1, 2) >= two;")]
         public void Parse_BinaryOp(string text) {
             Parser parser = new Parser(new Tokenizer(text));
             AbstractSyntaxTreeNode root = parser.Parse();
@@ -81,7 +81,7 @@ namespace Rewired.Interpreter.Tests {
         }
 
         [TestCase("func A() { }", ExpectedResult = true)]
-        [TestCase("a := 1;", ExpectedResult = false)]
+        [TestCase("int a := 1;", ExpectedResult = false)]
         public bool Parse_FunctionDeclaration(string text) {
             Parser parser = new Parser(new Tokenizer(text));
             AbstractSyntaxTreeNode root = parser.Parse();
@@ -116,7 +116,7 @@ namespace Rewired.Interpreter.Tests {
 
         [Test]
         public void Parse_FunctionDeclaration_Body() {
-            Parser parser = new Parser(new Tokenizer("func A() { a := 2; }"));
+            Parser parser = new Parser(new Tokenizer("func A() { int a := 2; }"));
             AbstractSyntaxTreeNode root = parser.Parse();
             TestASTNodeVisitor visitor = new TestASTNodeVisitor();
             root.VisitNode(visitor);

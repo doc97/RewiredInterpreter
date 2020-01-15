@@ -57,8 +57,8 @@ namespace Rewired.Interpreter.Tests {
             return (float) interpreter.Interpret();
         }
 
-        [TestCase("a := false; return a;", ExpectedResult = false)]
-        [TestCase("a := true; return a;", ExpectedResult = true)]
+        [TestCase("bool a := false; return a;", ExpectedResult = false)]
+        [TestCase("bool a := true; return a;", ExpectedResult = true)]
         public bool Interpret_Bool_Variable(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
@@ -67,22 +67,22 @@ namespace Rewired.Interpreter.Tests {
 
         [TestCase("return !false;", ExpectedResult = true)]
         [TestCase("return !true;", ExpectedResult = false)]
-        [TestCase("a := false; return !a;", ExpectedResult = true)]
-        [TestCase("a := true; return !a;", ExpectedResult = false)]
+        [TestCase("bool a := false; return !a;", ExpectedResult = true)]
+        [TestCase("bool a := true; return !a;", ExpectedResult = false)]
         public bool Interpret_Bool_Negation(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (bool) interpreter.Interpret();
         }
 
-        [TestCase("t := true; return !(t);", ExpectedResult = false)]
-        [TestCase("t := true; return (!t);", ExpectedResult = false)]
-        [TestCase("t := true; return (!(t));", ExpectedResult = false)]
-        [TestCase("t := true; return !(!(t));", ExpectedResult = true)]
-        [TestCase("f := false; return !(f);", ExpectedResult = true)]
-        [TestCase("f := false; return (!f);", ExpectedResult = true)]
-        [TestCase("f := false; return (!(f));", ExpectedResult = true)]
-        [TestCase("f := false; return !(!(f));", ExpectedResult = false)]
+        [TestCase("bool t := true; return !(t);", ExpectedResult = false)]
+        [TestCase("bool t := true; return (!t);", ExpectedResult = false)]
+        [TestCase("bool t := true; return (!(t));", ExpectedResult = false)]
+        [TestCase("bool t := true; return !(!(t));", ExpectedResult = true)]
+        [TestCase("bool f := false; return !(f);", ExpectedResult = true)]
+        [TestCase("bool f := false; return (!f);", ExpectedResult = true)]
+        [TestCase("bool f := false; return (!(f));", ExpectedResult = true)]
+        [TestCase("bool f := false; return !(!(f));", ExpectedResult = false)]
         [TestCase("return !(true && false);", ExpectedResult = true)]
         public bool Interpret_Bool_Parenthesis(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
@@ -105,7 +105,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("return 1 >= 2;", ExpectedResult = false)]
         [TestCase("return 1 == 2;", ExpectedResult = false)]
         [TestCase("return 1 != 2;", ExpectedResult = true)]
-        [TestCase("a := 2; return a + 3 == 5;", ExpectedResult = true)]
+        [TestCase("int a := 2; return a + 3 == 5;", ExpectedResult = true)]
         [TestCase("func Sum(int a, int b) { return a + b; } return Sum(3, 2) < 5;", ExpectedResult = false)]
         public bool Interpret_Bool_ConditionalOperators(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
@@ -113,8 +113,8 @@ namespace Rewired.Interpreter.Tests {
             return (bool) interpreter.Interpret();
         }
 
-        [TestCase("x := 2; return x + 3;", ExpectedResult = 5)]
-        [TestCase("a := 3; b := a * 2; return b - 2;", ExpectedResult = 4)]
+        [TestCase("int x := 2; return x + 3;", ExpectedResult = 5)]
+        [TestCase("int a := 3; int b := a * 2; return b - 2;", ExpectedResult = 4)]
         public int Interpret_HandleVariableValues(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
@@ -130,15 +130,15 @@ namespace Rewired.Interpreter.Tests {
             return (int?) interpreter.Interpret();
         }
 
-        [TestCase("b := true; if b { return 1; } else { return 0; }", ExpectedResult = 1)]
-        [TestCase("b := false; if b { return 1; } else { return 0; }", ExpectedResult = 0)]
+        [TestCase("bool b := true; if b { return 1; } else { return 0; }", ExpectedResult = 1)]
+        [TestCase("bool b := false; if b { return 1; } else { return 0; }", ExpectedResult = 0)]
         public int Interpret_If_Variable(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (int) interpreter.Interpret();
         }
 
-        [TestCase("a := 0; func One() { return 1; } a := One(); return a;", ExpectedResult = 1)]
+        [TestCase("int a := 0; func One() { return 1; } int a := One(); return a;", ExpectedResult = 1)]
         [TestCase("func Two() { return 2; } return Two();", ExpectedResult = 2)]
         [TestCase("func Two() { return 2; } func Double(int n) { return 2 * n; } return Double(Two());", ExpectedResult = 4)]
         public int Interpret_FunctionCall_Return(string text) {

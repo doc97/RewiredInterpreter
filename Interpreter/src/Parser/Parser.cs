@@ -198,11 +198,10 @@ namespace Rewired.Interpreter {
             AbstractSyntaxTreeNode node = null;
             TokenType type = tokenizer.Token.Type;
             if (type == TokenType.Id) {
-                if (tokenizer.Next().Token.Type == TokenType.LeftParenthesis) {
-                    node = FunctionCall();
-                } else {
-                    node = AssignmentStatement();
-                }
+                node = FunctionCall();
+                tokenizer = Eat(tokenizer, TokenType.SemiColon);
+            } else if (IsOneOfTypes(tokenizer.Token, TokenType.BoolType, TokenType.FloatType, TokenType.IntegerType)) {
+                node = AssignmentStatement();
                 tokenizer = Eat(tokenizer, TokenType.SemiColon);
             } else if (type == TokenType.Return) {
                 node = ReturnStatement();
@@ -230,14 +229,15 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// AssignmentStatement implements the ASSIGNMENT grammar rule.
         ///
-        /// Rule: ASSIGNMENT -> VAR "=" EXPR
+        /// Rule: ASSIGNMENT -> TYPE VAR "=" EXPR
         /// </summary>
         private AbstractSyntaxTreeNode AssignmentStatement() {
+            AbstractSyntaxTreeNode type = Type();
             AbstractSyntaxTreeNode left = Variable();
             Token op = tokenizer.Token;
             tokenizer = Eat(tokenizer, TokenType.Assign);
             AbstractSyntaxTreeNode right = Expression();
-            return new Assign(left, op, right);
+            return new Assign(type, left, op, right);
         }
 
         /// <summary>
