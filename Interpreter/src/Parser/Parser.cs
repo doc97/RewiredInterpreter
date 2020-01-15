@@ -281,56 +281,18 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Expression implements the EXPR grammar rule.
         /// 
-        /// Rule: EXPR -> NUM_EXPR | BOOL_EXPR
+        /// Rule: EXPR -> BOOL_EXPR | NUM_EXPR
         /// </summary>
         private AbstractSyntaxTreeNode Expression() {
             Token token = tokenizer.Token;
-
-            // Check if the type of expression can be determined early
-            if (IsOneOfTypes(token,
-                             TokenType.IntegerConst,
-                             TokenType.FloatConst,
-                             TokenType.Plus,
-                             TokenType.Minus)) {
-                return NumericalExpression();
-            } else if (IsOneOfTypes(token, TokenType.BoolConst, TokenType.ExclamationPoint)) {
-                return BooleanExpression();
-            }
-
-            // Save the original tokenizer
-            // and look-ahead one expression term
             Tokenizer origTokenizer = tokenizer;
-            AbstractSyntaxTreeNode expr = null;
 
-            if (token.Type == TokenType.LeftParenthesis) {
-                tokenizer = Eat(tokenizer, TokenType.LeftParenthesis);
-                expr = Expression();
-                tokenizer = Eat(tokenizer, TokenType.RightParenthesis);
-            } else if (token.Type == TokenType.Id && tokenizer.Next().Token.Type == TokenType.LeftParenthesis) {
-                expr = FunctionCall();
-            } else {
-                expr = Variable();
-            }
-
-            // Determine the expression type based on the token (operator)
-            // after the first term
-            if (IsOneOfTypes(tokenizer.Token,
-                             TokenType.Plus,
-                             TokenType.Minus,
-                             TokenType.Asterisk,
-                             TokenType.Slash)) {
-                // restore tokenizer after look-ahead
+            try {
+                return BooleanExpression();
+            } catch (ParserError) {
+                // restore tokenizer state after failing to parse boolean expression
                 tokenizer = origTokenizer;
                 return NumericalExpression();
-            } else if (IsOneOfTypes(tokenizer.Token,
-                                    TokenType.ExclamationPoint,
-                                    TokenType.LogicalAnd,
-                                    TokenType.LogicalOr)) {
-                // restore tokenizer after look-ahead
-                tokenizer = origTokenizer;
-                return BooleanExpression();
-            } else {
-                return expr;
             }
         }
 
@@ -362,6 +324,7 @@ namespace Rewired.Interpreter {
         /// Rule: BOOL_TERM -> "(" BOOL_EXPR ")"
         ///                  | "!" BOOL_TERM
         ///                  | BOOL_CONST
+        ///                  | NUM_EXPR COND_OP NUM_EXPR
         ///                  | FUNCTION_CALL
         ///                  | VAR
         /// </summary>
@@ -378,10 +341,27 @@ namespace Rewired.Interpreter {
             } else if (token.Type == TokenType.BoolConst) {
                 tokenizer = Eat(tokenizer, TokenType.BoolConst);
                 return new Bool(token);
-            } else if (token.Type == TokenType.Id && tokenizer.Next().Token.Type == TokenType.LeftParenthesis) {
-                return FunctionCall();
             } else {
-                return Variable();
+                AbstractSyntaxTreeNode left = NumericalExpression();
+                if (IsOneOfTypes(tokenizer.Token,
+                                 TokenType.LessThan,
+                                 TokenType.GreaterThan,
+                                 TokenType.LessThanOrEqual,
+                                 TokenType.GreaterThanOrEqual,
+                                 TokenType.Equal,
+                                 TokenType.NotEqual)) {
+                    Token op = tokenizer.Token;
+                    tokenizer = Eat(tokenizer, tokenizer.Token.Type);
+                    AbstractSyntaxTreeNode right = NumericalExpression();
+                    return new BinaryOp(left, op, right);
+                }
+
+                if (left is FunctionCall || left is Var) {
+                    return left;
+                }
+
+                ErrorUnexpectedToken(tokenizer.Token);
+                return null;
             }
         }
 

@@ -80,13 +80,15 @@ IF_STATEMENT -> "if" BOOL_EXPR BLOCK ("else" BLOCK)?
 ELSE_STATEMENT -> "else" BLOCK
 VAR -> ID
 EMPTY -> ""
-EXPR -> NUM_EXPR | BOOL_EXPR
+EXPR -> BOOL_EXPR | NUM_EXPR
 BOOL_EXPR -> BOOL_TERM (("&&" | "||") BOOL_TERM)*
 BOOL_TERM -> "(" BOOL_EXPR ")"
            | "!" BOOL_TERM
            | BOOL_CONST
+           | NUM_EXPR COND_OP NUM_EXPR
            | FUNCTION_CALL
            | VAR
+COND_OP -> "<" | ">" | "<=" | ">=" | "==" | "!="
 NUM_EXPR -> NUM_TERM (("+" | "-") NUM_TERM)*
 NUM_TERM -> FACTOR (("*" | "/") FACTOR)*
 FACTOR -> "(" NUM_EXPR ")"

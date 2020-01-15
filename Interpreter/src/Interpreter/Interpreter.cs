@@ -112,8 +112,48 @@ namespace Rewired.Interpreter {
                     }
                     break;
                 case TokenType.LogicalOr:
-                    if (left is bool) {
-                        return (bool) left || (bool) right;
+                    // types are checked by the semantic analyzer
+                    return (bool) left || (bool) right;
+                case TokenType.LessThan:
+                    if (left is int) {
+                        return (int) left < (int) right;
+                    } else if (left is float) {
+                        return (float) left < (float) right;
+                    }
+                    break;
+                case TokenType.GreaterThan:
+                    if (left is int) {
+                        return (int) left > (int) right;
+                    } else if (left is float) {
+                        return (float) left > (float) right;
+                    }
+                    break;
+                case TokenType.LessThanOrEqual:
+                    if (left is int) {
+                        return (int) left <= (int) right;
+                    } else if (left is float) {
+                        return (float) left <= (float) right;
+                    }
+                    break;
+                case TokenType.GreaterThanOrEqual:
+                    if (left is int) {
+                        return (int) left >= (int) right;
+                    } else if (left is float) {
+                        return (float) left >= (float) right;
+                    }
+                    break;
+                case TokenType.Equal:
+                    if (left is int) {
+                        return (int) left == (int) right;
+                    } else if (left is float) {
+                        return (float) left == (float) right;
+                    }
+                    break;
+                case TokenType.NotEqual:
+                    if (left is int) {
+                        return (int) left != (int) right;
+                    } else if (left is float) {
+                        return (float) left != (float) right;
                     }
                     break;
             }

@@ -64,6 +64,14 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("a := 1 / 2;")]
         [TestCase("a := true && true;")]
         [TestCase("a := true || false;")]
+        [TestCase("a := 1 < 2;")]
+        [TestCase("a := 1 > 2;")]
+        [TestCase("a := 1 <= 2;")]
+        [TestCase("a := 1 >= 2;")]
+        [TestCase("a := 1 == 2;")]
+        [TestCase("a := 1 != 2;")]
+        [TestCase("a := 1+1 < 2+5;")]
+        [TestCase("a := Sum(1, 2) >= two;")]
         public void Parse_BinaryOp(string text) {
             Parser parser = new Parser(new Tokenizer(text));
             AbstractSyntaxTreeNode root = parser.Parse();

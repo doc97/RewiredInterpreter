@@ -99,6 +99,20 @@ namespace Rewired.Interpreter.Tests {
             return (bool) interpreter.Interpret();
         }
 
+        [TestCase("return 1 < 2;", ExpectedResult = true)]
+        [TestCase("return 1 > 2;", ExpectedResult = false)]
+        [TestCase("return 1 <= 2;", ExpectedResult = true)]
+        [TestCase("return 1 >= 2;", ExpectedResult = false)]
+        [TestCase("return 1 == 2;", ExpectedResult = false)]
+        [TestCase("return 1 != 2;", ExpectedResult = true)]
+        [TestCase("a := 2; return a + 3 == 5;", ExpectedResult = true)]
+        [TestCase("func Sum(int a, int b) { return a + b; } return Sum(3, 2) < 5;", ExpectedResult = false)]
+        public bool Interpret_Bool_ConditionalOperators(string text) {
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            Interpreter interpreter = new Interpreter(tree);
+            return (bool) interpreter.Interpret();
+        }
+
         [TestCase("x := 2; return x + 3;", ExpectedResult = 5)]
         [TestCase("a := 3; b := a * 2; return b - 2;", ExpectedResult = 4)]
         public int Interpret_HandleVariableValues(string text) {

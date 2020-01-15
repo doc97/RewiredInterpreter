@@ -98,8 +98,6 @@ namespace Rewired.Interpreter {
                     token = GetId(text, line, column);
                 } else if ("0123456789".Contains(currentChar)) {
                     token = GetNumber(text, line, column, ref offset);
-                } else if (currentChar == '!') {
-                    token = new Token(TokenType.ExclamationPoint, "!", line, column);
                 } else if (currentChar == '+') {
                     token = new Token(TokenType.Plus, "+", line, column);
                 } else if (currentChar == '-') {
@@ -120,12 +118,26 @@ namespace Rewired.Interpreter {
                     token = new Token(TokenType.SemiColon, ";", line, column);
                 } else if (currentChar == ',') {
                     token = new Token(TokenType.Comma, ",", line, column);
+                } else if (next2Char == "<=") {
+                    token = new Token(TokenType.LessThanOrEqual, "<=", line, column);
+                } else if (next2Char == ">=") {
+                    token = new Token(TokenType.GreaterThanOrEqual, ">=", line, column);
+                } else if (next2Char == "==") {
+                    token = new Token(TokenType.Equal, "==", line, column);
+                } else if (next2Char == "!=") {
+                    token = new Token(TokenType.NotEqual, "!=", line, column);
                 } else if (next2Char == "&&") {
                     token = new Token(TokenType.LogicalAnd, "&&", line, column);
                 } else if (next2Char == "||") {
                     token = new Token(TokenType.LogicalOr, "||", line, column);
                 } else if (next2Char == ":=") {
                     token = new Token(TokenType.Assign, ":=", line, column);
+                } else if (currentChar == '!') {
+                    token = new Token(TokenType.ExclamationPoint, "!", line, column);
+                } else if (currentChar == '<') {
+                    token = new Token(TokenType.LessThan, "<", line, column);
+                } else if (currentChar == '>') {
+                    token = new Token(TokenType.GreaterThan, ">", line, column);
                 }
 
                 if (token.Type == TokenType.Eof) {
