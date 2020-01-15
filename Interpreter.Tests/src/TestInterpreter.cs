@@ -83,7 +83,17 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("f := false; return (!f);", ExpectedResult = true)]
         [TestCase("f := false; return (!(f));", ExpectedResult = true)]
         [TestCase("f := false; return !(!(f));", ExpectedResult = false)]
+        [TestCase("return !(true && false);", ExpectedResult = true)]
         public bool Interpret_Bool_Parenthesis(string text) {
+            AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
+            Interpreter interpreter = new Interpreter(tree);
+            return (bool) interpreter.Interpret();
+        }
+
+        [TestCase("return true && false;", ExpectedResult = false)]
+        [TestCase("return true || false;", ExpectedResult = true)]
+        [TestCase("return !false || !true;", ExpectedResult = true)]
+        public bool Interpret_Bool_LogicalOperators(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (bool) interpreter.Interpret();

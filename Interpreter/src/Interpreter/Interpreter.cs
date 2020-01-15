@@ -106,6 +106,16 @@ namespace Rewired.Interpreter {
                         return (float) left / (float) right;
                     }
                     break;
+                case TokenType.LogicalAnd:
+                    if (left is bool) {
+                        return (bool) left && (bool) right;
+                    }
+                    break;
+                case TokenType.LogicalOr:
+                    if (left is bool) {
+                        return (bool) left || (bool) right;
+                    }
+                    break;
             }
             throw new NotImplementedException(string.Format(
                 "Binary operator '{0}' not implemented for the type '{1}'",
