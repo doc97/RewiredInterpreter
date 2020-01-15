@@ -8,13 +8,11 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Gets the left-hand operand.
         /// </summary>
-        /// <value>Can only be a `Num` AST node.</value>
         public AbstractSyntaxTreeNode Left { get; }
 
         /// <summary>
         /// Gets the right-hand operand.
         /// </summary>
-        /// <value>Can only be a `Num` AST node.</value>
         public AbstractSyntaxTreeNode Right { get; }
 
         /// <summary>
@@ -33,7 +31,7 @@ namespace Rewired.Interpreter {
                      Token op,
                      AbstractSyntaxTreeNode right) {
             Left = left;
-            Op = op; 
+            Op = op;
             Right = right;
         }
 

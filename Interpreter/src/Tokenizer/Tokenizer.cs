@@ -84,6 +84,7 @@ namespace Rewired.Interpreter {
             int column = Column;
             int offset = 0; // used to skip 'f'/'F' in floats
             char currentChar = NextChar(text);
+            string next2Char = NextString(text, 2);
 
             while (currentChar != '\0') {
                 Token token = new Token(TokenType.Eof, null, line, column);
@@ -91,6 +92,7 @@ namespace Rewired.Interpreter {
                 if (char.IsWhiteSpace(currentChar)) {
                     text = SkipWhitespace(text, ref line, ref column);
                     currentChar = NextChar(text);
+                    next2Char = NextString(text, 2);
                     continue;
                 } else if (char.IsLetter(currentChar)) {
                     token = GetId(text, line, column);
@@ -118,7 +120,11 @@ namespace Rewired.Interpreter {
                     token = new Token(TokenType.SemiColon, ";", line, column);
                 } else if (currentChar == ',') {
                     token = new Token(TokenType.Comma, ",", line, column);
-                } else if (NextString(text, 2) == ":=") {
+                } else if (next2Char == "&&") {
+                    token = new Token(TokenType.LogicalAnd, "&&", line, column);
+                } else if (next2Char == "||") {
+                    token = new Token(TokenType.LogicalOr, "||", line, column);
+                } else if (next2Char == ":=") {
                     token = new Token(TokenType.Assign, ":=", line, column);
                 }
 

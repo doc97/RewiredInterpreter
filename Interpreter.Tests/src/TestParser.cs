@@ -58,6 +58,20 @@ namespace Rewired.Interpreter.Tests {
             Assert.IsTrue(parser.Parse() is Program);
         }
 
+        [TestCase("a := 1 + 2;")]
+        [TestCase("a := 1 - 2;")]
+        [TestCase("a := 1 * 2;")]
+        [TestCase("a := 1 / 2;")]
+        [TestCase("a := true && true;")]
+        [TestCase("a := true || false;")]
+        public void Parse_BinaryOp(string text) {
+            Parser parser = new Parser(new Tokenizer(text));
+            AbstractSyntaxTreeNode root = parser.Parse();
+            TestASTNodeVisitor visitor = new TestASTNodeVisitor();
+            root.VisitNode(visitor);
+            Assert.IsTrue(visitor.BinaryOpVisited);
+        }
+
         [TestCase("func A() { }", ExpectedResult = true)]
         [TestCase("a := 1;", ExpectedResult = false)]
         public bool Parse_FunctionDeclaration(string text) {
@@ -194,6 +208,7 @@ namespace Rewired.Interpreter.Tests {
 
             public object Visit(Assign assign) {
                 AssignVisited = true;
+                assign.Right.VisitNode(this);
                 return null;
             }
 

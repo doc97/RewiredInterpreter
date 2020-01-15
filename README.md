@@ -81,16 +81,17 @@ ELSE_STATEMENT -> "else" BLOCK
 VAR -> ID
 EMPTY -> ""
 EXPR -> NUM_EXPR | BOOL_EXPR
-BOOL_EXPR -> "!" BOOL_EXPR
-           | "(" BOOL_EXPR ")"
+BOOL_EXPR -> BOOL_TERM (("&&" | "||") BOOL_TERM)*
+BOOL_TERM -> "(" BOOL_EXPR ")"
+           | "!" BOOL_TERM
            | BOOL_CONST
            | FUNCTION_CALL
            | VAR
-NUM_EXPR -> TERM (("+" | "-") TERM)*
-TERM -> FACTOR (("*" | "/") FACTOR)*
-FACTOR -> "+" FACTOR
+NUM_EXPR -> NUM_TERM (("+" | "-") NUM_TERM)*
+NUM_TERM -> FACTOR (("*" | "/") FACTOR)*
+FACTOR -> "(" NUM_EXPR ")"
+        | "+" FACTOR
         | "-" FACTOR
-        | "(" NUM_EXPR ")"
         | FLOAT_CONST
         | INTEGER_CONST
         | FUNCTION_CALL

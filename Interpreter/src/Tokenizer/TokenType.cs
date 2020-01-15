@@ -19,6 +19,8 @@ namespace Rewired.Interpreter {
         RightParenthesis,
         LeftCurlyBracket,
         RightCurlyBracket,
+        LogicalAnd,
+        LogicalOr,
         Assign,
         SemiColon,
         Comma,
