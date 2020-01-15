@@ -60,6 +60,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("-", ExpectedResult = "-")]
         [TestCase("*", ExpectedResult = "*")]
         [TestCase("/", ExpectedResult = "/")]
+        [TestCase("!", ExpectedResult = "!")]
         [TestCase("(", ExpectedResult = "(")]
         [TestCase(")", ExpectedResult = ")")]
         [TestCase("{", ExpectedResult = "{")]
@@ -111,7 +112,6 @@ namespace Rewired.Interpreter.Tests {
         }
 
         [TestCase("#", 1, 1, '#')]
-        [TestCase("a! := 1;", 1, 2, '!')]
         [TestCase("a := #4;", 1, 6, '#')]
         [TestCase("a := 1;\nb := 1%;", 2, 7, '%')]
         public void Next_UnrecognizedCharacter(string text, int errLine, int errCol, char errLexeme) {

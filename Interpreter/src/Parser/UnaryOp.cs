@@ -15,7 +15,7 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// Gets the operator token.
         /// </summary>
-        /// <value>Either a "+" or "-" token.</value>
+        /// <value>Either a "+", "-" or "!" token.</value>
         public Token Op { get; }
 
         /// <summary>

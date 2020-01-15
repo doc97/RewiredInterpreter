@@ -96,6 +96,8 @@ namespace Rewired.Interpreter {
                     token = GetId(text, line, column);
                 } else if ("0123456789".Contains(currentChar)) {
                     token = GetNumber(text, line, column, ref offset);
+                } else if (currentChar == '!') {
+                    token = new Token(TokenType.ExclamationPoint, "!", line, column);
                 } else if (currentChar == '+') {
                     token = new Token(TokenType.Plus, "+", line, column);
                 } else if (currentChar == '-') {

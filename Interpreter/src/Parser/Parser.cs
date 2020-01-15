@@ -293,7 +293,7 @@ namespace Rewired.Interpreter {
                              TokenType.Plus,
                              TokenType.Minus)) {
                 return NumericalExpression();
-            } else if (token.Type == TokenType.BoolConst) {
+            } else if (IsOneOfTypes(token, TokenType.BoolConst, TokenType.ExclamationPoint)) {
                 return BooleanExpression();
             }
 
@@ -331,11 +331,14 @@ namespace Rewired.Interpreter {
         /// <summary>
         /// BooleanExpression implements the BOOL_EXPR grammar rule.
         /// 
-        /// Rule: BOOL_EXPR -> BOOL_CONST | FUNCTION_CALL | VAR
+        /// Rule: BOOL_EXPR -> "!" BOOL_EXPR | BOOL_CONST | FUNCTION_CALL | VAR
         /// </summary>
         private AbstractSyntaxTreeNode BooleanExpression() {
             Token token = tokenizer.Token;
-            if (token.Type == TokenType.BoolConst) {
+            if (token.Type == TokenType.ExclamationPoint) {
+                tokenizer = Eat(tokenizer, TokenType.ExclamationPoint);
+                return new UnaryOp(token, BooleanExpression());
+            } else if (token.Type == TokenType.BoolConst) {
                 tokenizer = Eat(tokenizer, TokenType.BoolConst);
                 return new Bool(token);
             } else if (token.Type == TokenType.Id && tokenizer.Next().Token.Type == TokenType.LeftParenthesis) {

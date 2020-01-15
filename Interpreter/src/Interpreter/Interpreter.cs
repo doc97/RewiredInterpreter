@@ -64,6 +64,8 @@ namespace Rewired.Interpreter {
                         return -(float) expr;
                     }
                     break;
+                case TokenType.ExclamationPoint:
+                    return !(bool) expr;
             }
             throw new NotImplementedException(string.Format(
                 "Unary operator '{0}' not implemented for the type '{1}'",

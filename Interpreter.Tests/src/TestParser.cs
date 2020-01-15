@@ -48,6 +48,7 @@ namespace Rewired.Interpreter.Tests {
         }
 
         [TestCase("return a;")]
+        [TestCase("return !a;")]
         [TestCase("return Sum();")]
         [TestCase("return a + Sum();")]
         [TestCase("return Sum(Term(), Term());")]
