@@ -52,6 +52,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("return Sum();")]
         [TestCase("return a + Sum();")]
         [TestCase("return Sum(Term(), Term());")]
+        [TestCase("return !((a));")]
         public void Parse_ReturnStatement(string text) {
             Parser parser = new Parser(new Tokenizer(text));
             Assert.IsTrue(parser.Parse() is Program);

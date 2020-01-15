@@ -81,7 +81,11 @@ ELSE_STATEMENT -> "else" BLOCK
 VAR -> ID
 EMPTY -> ""
 EXPR -> NUM_EXPR | BOOL_EXPR
-BOOL_EXPR -> "!" BOOL_EXPR | BOOL_CONST | FUNCTION_CALL | VAR
+BOOL_EXPR -> "!" BOOL_EXPR
+           | "(" BOOL_EXPR ")"
+           | BOOL_CONST
+           | FUNCTION_CALL
+           | VAR
 NUM_EXPR -> TERM (("+" | "-") TERM)*
 TERM -> FACTOR (("*" | "/") FACTOR)*
 FACTOR -> "+" FACTOR
