@@ -11,7 +11,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("return 2-3;", ExpectedResult = -1)]
         [TestCase("return 3*2;", ExpectedResult = 6)]
         [TestCase("return 4/2;", ExpectedResult = 2)]
-        public int Interpret_Calculation(string text) {
+        public int Interpret_Int_Calculation(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (int) interpreter.Interpret();
@@ -20,7 +20,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("return 1 + 2 * 3;", ExpectedResult = 7)]
         [TestCase("return 1 / 2 + 3;", ExpectedResult = 3)]
         [TestCase("return 4 * 3 / 2;", ExpectedResult = 6)]
-        public int Interpret_RespectsArithmeticPrecedence(string text) {
+        public int Interpret_Int_ArithmeticPrecedence(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (int) interpreter.Interpret();
@@ -28,21 +28,21 @@ namespace Rewired.Interpreter.Tests {
 
         [TestCase("return (1 + 1) * 3;", ExpectedResult = 6)]
         [TestCase("return 2 + (1 + 3) * 3;", ExpectedResult = 14)]
-        public int Interprets_RespectParentheses(string text) {
+        public int Interprets_Int_Parentheses(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (int) interpreter.Interpret();
         }
 
         [TestCase("return 3 * (2 + (5 - 3));", ExpectedResult = 12)]
-        public int Interpret_HandleNestedParentheses(string text) {
+        public int Interpret_Int_NestedParentheses(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (int) interpreter.Interpret();
         }
 
         [TestCase("return 5---2;", ExpectedResult = 3)]
-        public int Interpret_HandleUnaryOperator(string text) {
+        public int Interpret_Int_UnaryOperator(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (int) interpreter.Interpret();
@@ -51,7 +51,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("return 2f;", ExpectedResult = 2)]
         [TestCase("return 2.5f;", ExpectedResult = 2.5f)]
         [TestCase("return 2.5f + 1f;", ExpectedResult = 3.5f)]
-        public float Interpret_FloatCalculation(string text) {
+        public float Interpret_Float_Calculation(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (float) interpreter.Interpret();
@@ -59,7 +59,7 @@ namespace Rewired.Interpreter.Tests {
 
         [TestCase("a := false; return a;", ExpectedResult = false)]
         [TestCase("a := true; return a;", ExpectedResult = true)]
-        public bool Interpret_BoolVariable(string text) {
+        public bool Interpret_Bool_Variable(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (bool) interpreter.Interpret();
@@ -69,7 +69,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("return !true;", ExpectedResult = false)]
         [TestCase("a := false; return !a;", ExpectedResult = true)]
         [TestCase("a := true; return !a;", ExpectedResult = false)]
-        public bool Interpret_NegBoolean(string text) {
+        public bool Interpret_Bool_Negation(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (bool) interpreter.Interpret();
@@ -86,7 +86,7 @@ namespace Rewired.Interpreter.Tests {
         [TestCase("if true { return 1; }", ExpectedResult = 1)]
         [TestCase("if false { return 2; }", ExpectedResult = null)]
         [TestCase("if false { return 2; } else { return 3; }", ExpectedResult = 3)]
-        public int? Interpret_IfStatement(string text) {
+        public int? Interpret_If(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (int?) interpreter.Interpret();
@@ -94,7 +94,7 @@ namespace Rewired.Interpreter.Tests {
 
         [TestCase("b := true; if b { return 1; } else { return 0; }", ExpectedResult = 1)]
         [TestCase("b := false; if b { return 1; } else { return 0; }", ExpectedResult = 0)]
-        public int Interpret_IfVarStatement(string text) {
+        public int Interpret_If_Variable(string text) {
             AbstractSyntaxTreeNode tree = new Parser(new Tokenizer(text)).Parse();
             Interpreter interpreter = new Interpreter(tree);
             return (int) interpreter.Interpret();
